@@ -1,17 +1,12 @@
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Button } from "react-bootstrap";
 import { logout } from "../services/AuthAPI";
 import AuthContext from "../contexts/AuthContext";
 
 function Home() {
 
-  // navigation
-  const navigate = useNavigate();
-
   // context
   const { user } = useContext(AuthContext);
-  const userId = user.userId;
 
   if (loading) {
     return null;
