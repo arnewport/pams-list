@@ -1,7 +1,10 @@
 package org.letpam.pamslist.domain;
 
 import org.letpam.pamslist.data.AppUserRepository;
+import org.letpam.pamslist.data.RoleRepository;
 import org.letpam.pamslist.models.AppUser;
+import org.letpam.pamslist.models.Role;
+import org.letpam.pamslist.models.UserDTO;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,10 +17,12 @@ import java.util.Optional;
 public class AppUserService implements UserDetailsService {
 
     private final AppUserRepository appUserRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AppUserService(AppUserRepository appUserRepository, PasswordEncoder passwordEncoder) {
+    public AppUserService(AppUserRepository appUserRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.appUserRepository = appUserRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -36,30 +41,35 @@ public class AppUserService implements UserDetailsService {
         return appUser;
     }
 
-    public Result<AppUser> add(String username, String password, String firstName, String lastName,
-                               Integer organizationId, String phoneNumber, String faxNumber) {
-        Result<AppUser> result = validate(username, password);
+    public Result<AppUser> add(UserDTO userDTO) {
+        Result<AppUser> result = validate(userDTO.getUsername(), userDTO.getPassword());
         if (!result.isSuccess()) {
             return result;
         }
 
-        password = passwordEncoder.encode(password);
+        String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
 
         AppUser appUser = new AppUser(
                 0, // id
-                username, // email
-                password, // passwordHash
-                firstName, // firstName
-                lastName, // lastName
-                organizationId, // organizationId
-                phoneNumber, // phoneNumber
-                Optional.ofNullable(faxNumber), // faxNumber
+                userDTO.getUsername(), // email
+                encodedPassword, // passwordHash
+                userDTO.getFirstName(), // firstName
+                userDTO.getLastName(), // lastName
+                userDTO.getOrganizationId(), // organizationId
+                userDTO.getPhoneNumber(), // phoneNumber
+                Optional.ofNullable(userDTO.getFaxNumber()), // faxNumber
                 null, // lastLogin (assuming this is set later)
                 true, // enabled
                 List.of("USER") // authorities
         );
 
-        result.setPayload(appUserRepository.add(appUser));
+        appUserRepository.save(appUser);
+
+        // Assign roles
+        Role defaultRole = roleRepository.findByName("USER");
+        appUserRepository.addRoleToUser(appUser.getId(), defaultRole.getId());
+
+        result.setPayload(appUser);
 
         return result;
     }
@@ -84,7 +94,7 @@ public class AppUserService implements UserDetailsService {
         }
 
         if (!validatePassword(password)) {
-            result.addMessage("password must be at least 8 character and contain a digit, a letter, and a non-digit/non-letter");
+            result.addMessage("password must be at least 8 characters and contain a digit, a letter, and a non-digit/non-letter");
         }
 
         if (!result.isSuccess()) {

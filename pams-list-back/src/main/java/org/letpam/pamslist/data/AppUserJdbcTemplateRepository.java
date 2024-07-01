@@ -22,7 +22,6 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
     @Override
     @Transactional
     public AppUser findByUsername(String username) {
-
         String sql = """
                 select
                      u.id,
@@ -38,11 +37,13 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
                 from app_user u
                 where u.email = ?;
                 """;
-        return jdbcTemplate.query(sql, new AppUserMapper(getAuthorities(username)), username).stream()
+        List<String> authorities = getAuthorities(username);
+        return jdbcTemplate.query(sql, new AppUserMapper(authorities), username).stream()
                 .findFirst().orElse(null);
     }
 
     @Override
+    @Transactional
     public AppUser add(AppUser appUser) {
         SimpleJdbcInsert insert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("app_user")
@@ -66,6 +67,50 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
         updateRoles(appUser);
 
         return appUser;
+    }
+
+    @Override
+    public void addRoleToUser(int appUserId, int roleId) {
+        String sql = """
+                insert into user_role (app_user_id, role_id)
+                values (?, ?);
+                """;
+        jdbcTemplate.update(sql, appUserId, roleId);
+    }
+
+    @Override
+    @Transactional
+    public void save(AppUser appUser) {
+        if (appUser.getId() == 0) {
+            add(appUser);
+        } else {
+            String sql = """
+                    update app_user set
+                        email = ?,
+                        password_hash = ?,
+                        enabled = ?,
+                        first_name = ?,
+                        last_name = ?,
+                        organization_id = ?,
+                        phone_number = ?,
+                        fax_number = ?,
+                        last_login = ?
+                    where id = ?;
+                    """;
+            jdbcTemplate.update(sql,
+                    appUser.getEmail(),
+                    appUser.getPassword(),
+                    appUser.isEnabled(),
+                    appUser.getFirstName(),
+                    appUser.getLastName(),
+                    appUser.getOrganizationId(),
+                    appUser.getPhoneNumber(),
+                    appUser.getFaxNumber().orElse(null),
+                    appUser.getLastLogin(),
+                    appUser.getId());
+
+            updateRoles(appUser);
+        }
     }
 
     private void updateRoles(AppUser appUser) {

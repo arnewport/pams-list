@@ -7,7 +7,12 @@ import ValidationSummary from "./ValidationSummary";
 function SignUp() {
   const [errors, setErrors] = useState([]);
   const [credentials, setCredentials] = useState({
-    username: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    faxNumber: "",
+    organizationId: "",
     password: "",
     confirmPassword: "",
   });
@@ -45,26 +50,85 @@ function SignUp() {
       <ValidationSummary errors={errors} />
       {success ? (
         <div className="alert alert-success">
-          Congratulations {credentials.username}, you have been registered.
+          Congratulations {credentials.firstName}, you have been registered.
           Login <Link to="/login">here</Link>.
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
           <div>
             <div className="form-group">
-              <label htmlFor="label">Username</label>
+              <label htmlFor="firstName">First Name</label>
               <input
                 type="text"
                 className="form-control align-left"
-                id="username"
-                name="username"
-                value={credentials.username}
+                id="firstName"
+                name="firstName"
+                value={credentials.firstName}
                 onChange={handleChange}
                 required
               />
             </div>
             <div className="form-group">
-              <label htmlFor="label">Password</label>
+              <label htmlFor="lastName">Last Name</label>
+              <input
+                type="text"
+                className="form-control align-left"
+                id="lastName"
+                name="lastName"
+                value={credentials.lastName}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                className="form-control align-left"
+                id="email"
+                name="email"
+                value={credentials.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="phoneNumber">Phone Number</label>
+              <input
+                type="text"
+                className="form-control align-left"
+                id="phoneNumber"
+                name="phoneNumber"
+                value={credentials.phoneNumber}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="faxNumber">Fax Number</label>
+              <input
+                type="text"
+                className="form-control align-left"
+                id="faxNumber"
+                name="faxNumber"
+                value={credentials.faxNumber}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="organizationId">Organization ID</label>
+              <input
+                type="text"
+                className="form-control align-left"
+                id="organizationId"
+                name="organizationId"
+                value={credentials.organizationId}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
               <input
                 type="password"
                 className="form-control align-left"
@@ -76,7 +140,7 @@ function SignUp() {
               />
             </div>
             <div className="form-group align-left">
-              <label htmlFor="label">Confirm password</label>
+              <label htmlFor="confirmPassword">Confirm password</label>
               <input
                 type="password"
                 className="form-control"

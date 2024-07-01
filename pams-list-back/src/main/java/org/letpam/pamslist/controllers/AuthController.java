@@ -3,6 +3,7 @@ package org.letpam.pamslist.controllers;
 import org.letpam.pamslist.domain.AppUserService;
 import org.letpam.pamslist.domain.Result;
 import org.letpam.pamslist.models.AppUser;
+import org.letpam.pamslist.models.UserDTO;
 import org.letpam.pamslist.security.JwtConvert;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -20,6 +22,7 @@ import java.util.Map;
 
 @RestController
 @ConditionalOnWebApplication
+@RequestMapping("/api/auth")  // Adding a base path for clarity
 public class AuthController {
 
     private final AppUserService appUserService;
@@ -36,7 +39,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
-
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 credentials.get("username"), credentials.get("password"));
 
@@ -53,16 +55,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Map<String, String> credentials) {
-        Result<AppUser> result = appUserService.add(
-                credentials.get("username"),
-                credentials.get("password"),
-                credentials.get("firstName"),
-                credentials.get("lastName"),
-                credentials.containsKey("organizationId") ? Integer.parseInt(credentials.get("organizationId")) : null,
-                credentials.get("phoneNumber"),
-                credentials.get("faxNumber")
-        );
+    public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
+        Result<AppUser> result = appUserService.add(userDTO);
         if (result.isSuccess()) {
             Map<String, Integer> userId = new HashMap<>();
             userId.put("user_id", result.getPayload().getId());
@@ -70,7 +64,6 @@ public class AuthController {
         }
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
-
 
     @PostMapping("/refresh-token")
     public ResponseEntity<Map<String, String>> refreshToken(@AuthenticationPrincipal AppUser appUser) {
