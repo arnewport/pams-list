@@ -26,23 +26,23 @@ public class AppUserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public AppUser findByUsername(String username) {
-        return appUserRepository.findByUsername(username);
+    public AppUser findByEmail(String email) {
+        return appUserRepository.findByEmail(email);
     }
 
     @Override
-    public AppUser loadUserByUsername(String username) throws UsernameNotFoundException {
-        AppUser appUser = appUserRepository.findByUsername(username);
+    public AppUser loadUserByUsername(String email) throws UsernameNotFoundException {
+        AppUser appUser = appUserRepository.findByEmail(email);
 
         if (appUser == null || !appUser.isEnabled()) {
-            throw new UsernameNotFoundException(String.format("%s not found.", username));
+            throw new UsernameNotFoundException(String.format("%s not found.", email));
         }
 
         return appUser;
     }
 
     public Result<AppUser> add(UserDTO userDTO) {
-        Result<AppUser> result = validate(userDTO.getUsername(), userDTO.getPassword());
+        Result<AppUser> result = validate(userDTO.getEmail(), userDTO.getPassword());
         if (!result.isSuccess()) {
             return result;
         }
@@ -51,7 +51,7 @@ public class AppUserService implements UserDetailsService {
 
         AppUser appUser = new AppUser(
                 0, // id
-                userDTO.getUsername(), // email
+                userDTO.getEmail(), // email
                 encodedPassword, // passwordHash
                 userDTO.getFirstName(), // firstName
                 userDTO.getLastName(), // lastName
@@ -74,11 +74,11 @@ public class AppUserService implements UserDetailsService {
         return result;
     }
 
-    private Result<AppUser> validate(String username, String password) {
+    private Result<AppUser> validate(String email, String password) {
         Result<AppUser> result = new Result<>();
 
-        if (username == null || username.isBlank()) {
-            result.addMessage("username is required");
+        if (email == null || email.isBlank()) {
+            result.addMessage("email is required");
         }
 
         if (password == null || password.isBlank()) {
@@ -89,8 +89,8 @@ public class AppUserService implements UserDetailsService {
             return result;
         }
 
-        if (username.length() > 50) {
-            result.addMessage("username must be 50 characters max");
+        if (email.length() > 50) {
+            result.addMessage("email must be 50 characters max");
         }
 
         if (!validatePassword(password)) {
@@ -102,8 +102,8 @@ public class AppUserService implements UserDetailsService {
         }
 
         try {
-            if (loadUserByUsername(username) != null) {
-                result.addMessage("the provided username already exists");
+            if (loadUserByUsername(email) != null) {
+                result.addMessage("the provided email already exists");
             }
         } catch (UsernameNotFoundException e) {
             // good!

@@ -21,11 +21,11 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
 
     @Override
     @Transactional
-    public AppUser findByUsername(String username) {
+    public AppUser findByEmail(String email) {
         String sql = """
                 select
                      u.id,
-                     u.email as username,
+                     u.email
                      u.password_hash,
                      u.enabled,
                      u.first_name,
@@ -37,8 +37,8 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
                 from app_user u
                 where u.email = ?;
                 """;
-        List<String> authorities = getAuthorities(username);
-        return jdbcTemplate.query(sql, new AppUserMapper(authorities), username).stream()
+        List<String> authorities = getAuthorities(email);
+        return jdbcTemplate.query(sql, new AppUserMapper(authorities), email).stream()
                 .findFirst().orElse(null);
     }
 
@@ -124,7 +124,7 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
         }
     }
 
-    private List<String> getAuthorities(String username) {
+    private List<String> getAuthorities(String email) {
         final String sql = """
                 select
                     r.name
@@ -133,6 +133,6 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
                 inner join app_user u on u.id = ur.app_user_id
                 where u.email = ?;
                 """;
-        return jdbcTemplate.query(sql, (rs, i) -> rs.getString("name"), username);
+        return jdbcTemplate.query(sql, (rs, i) -> rs.getString("name"), email);
     }
 }

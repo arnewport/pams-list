@@ -3,7 +3,7 @@ package org.letpam.pamslist.models;
 import java.util.Objects;
 
 public class UserDTO {
-    private String username;
+    private String email;
     private String password;
     private String firstName;
     private String lastName;
@@ -11,8 +11,8 @@ public class UserDTO {
     private String phoneNumber;
     private String faxNumber;
 
-    public UserDTO(String username, String password, String firstName, String lastName, Integer organizationId, String phoneNumber, String faxNumber) {
-        this.username = username;
+    public UserDTO(String email, String password, String firstName, String lastName, Integer organizationId, String phoneNumber, String faxNumber) {
+        this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -21,12 +21,12 @@ public class UserDTO {
         this.faxNumber = faxNumber;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
@@ -82,11 +82,11 @@ public class UserDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         UserDTO userDTO = (UserDTO) o;
-        return Objects.equals(username, userDTO.username) && Objects.equals(password, userDTO.password) && Objects.equals(firstName, userDTO.firstName) && Objects.equals(lastName, userDTO.lastName) && Objects.equals(organizationId, userDTO.organizationId) && Objects.equals(phoneNumber, userDTO.phoneNumber) && Objects.equals(faxNumber, userDTO.faxNumber);
+        return Objects.equals(email, userDTO.email) && Objects.equals(password, userDTO.password) && Objects.equals(firstName, userDTO.firstName) && Objects.equals(lastName, userDTO.lastName) && Objects.equals(organizationId, userDTO.organizationId) && Objects.equals(phoneNumber, userDTO.phoneNumber) && Objects.equals(faxNumber, userDTO.faxNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, password, firstName, lastName, organizationId, phoneNumber, faxNumber);
+        return Objects.hash(email, password, firstName, lastName, organizationId, phoneNumber, faxNumber);
     }
 }

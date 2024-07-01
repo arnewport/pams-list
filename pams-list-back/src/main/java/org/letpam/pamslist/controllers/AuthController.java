@@ -40,7 +40,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                credentials.get("username"), credentials.get("password"));
+                credentials.get("email"), credentials.get("password"));
 
         Authentication authentication = authenticationManager.authenticate(authToken);
         if (authentication.isAuthenticated()) {
