@@ -19,11 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 @RestController
 @ConditionalOnWebApplication
 @RequestMapping("/api/auth")  // Adding a base path for clarity
 public class AuthController {
+
+    private static final Logger logger = Logger.getLogger(AuthController.class.getName());
 
     private final AppUserService appUserService;
     private final JwtConvert jwtConverter;
@@ -39,37 +42,54 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
+        logger.info("Received login request for email: " + credentials.get("email"));
+
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                 credentials.get("email"), credentials.get("password"));
 
-        Authentication authentication = authenticationManager.authenticate(authToken);
-        if (authentication.isAuthenticated()) {
-            AppUser appUser = (AppUser) authentication.getPrincipal();
-            String jwt = jwtConverter.getTokenFromUser(appUser);
-            Map<String, String> result = new HashMap<>();
-            result.put("jwt_token", jwt);
-            return ResponseEntity.ok(result);
+        try {
+            Authentication authentication = authenticationManager.authenticate(authToken);
+            if (authentication.isAuthenticated()) {
+                AppUser appUser = (AppUser) authentication.getPrincipal();
+                String jwt = jwtConverter.getTokenFromUser(appUser);
+                Map<String, String> result = new HashMap<>();
+                result.put("jwt_token", jwt);
+                logger.info("User authenticated successfully: " + appUser.getEmail());
+                return ResponseEntity.ok(result);
+            }
+        } catch (Exception e) {
+            logger.severe("Authentication failed for email: " + credentials.get("email") + " - " + e.getMessage());
         }
 
+        logger.warning("Authentication failed, returning 403 for email: " + credentials.get("email"));
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
+        logger.info("Received registration request for email: " + userDTO.getEmail());
+
         Result<AppUser> result = appUserService.add(userDTO);
         if (result.isSuccess()) {
             Map<String, Integer> userId = new HashMap<>();
             userId.put("user_id", result.getPayload().getId());
+            logger.info("User registered successfully: " + userDTO.getEmail());
             return new ResponseEntity<>(userId, HttpStatus.CREATED);
         }
+
+        logger.warning("Registration failed for email: " + userDTO.getEmail() + " - " + result.getMessages());
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/refresh-token")
     public ResponseEntity<Map<String, String>> refreshToken(@AuthenticationPrincipal AppUser appUser) {
+        logger.info("Received refresh token request for user: " + appUser.getEmail());
+
         String jwt = jwtConverter.getTokenFromUser(appUser);
         Map<String, String> result = new HashMap<>();
         result.put("jwt_token", jwt);
+
+        logger.info("Token refreshed successfully for user: " + appUser.getEmail());
         return ResponseEntity.ok(result);
     }
 }

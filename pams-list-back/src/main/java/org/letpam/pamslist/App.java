@@ -18,27 +18,29 @@ public class App {
     @Bean
     public WebMvcConfigurer corsConfigurer() {
 
-        // Configure CORS globally versus
-        // controller-by-controller.
-        // Can be combined with @CrossOrigin.
         return new WebMvcConfigurer() {
 
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("*")
-                        // Should tighten up CORS policies.
-                        // For now, we allow everything.
-                        //.allowedOrigins("http://localhost:3000", "http://127.0.0.1:5500")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
+                        .allowedOrigins(
+                                "http://localhost:3000",
+                                "http://localhost:5000",
+                                "http://localhost:8080",
+                                "http://127.0.0.1:3000",
+                                "http://127.0.0.1:5000",
+                                "http://127.0.0.1:8080")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
 
 }
 

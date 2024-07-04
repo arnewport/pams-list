@@ -12,9 +12,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class AppUserService implements UserDetailsService {
+
+    private static final Logger logger = Logger.getLogger(AppUserService.class.getName());
 
     private final AppUserRepository appUserRepository;
     private final RoleRepository roleRepository;
@@ -27,27 +30,40 @@ public class AppUserService implements UserDetailsService {
     }
 
     public AppUser findByEmail(String email) {
-        return appUserRepository.findByEmail(email);
+        logger.info("Finding user by email: " + email);
+        AppUser user = appUserRepository.findByEmail(email);
+        if (user != null) {
+            logger.info("User found: " + user.getEmail());
+        } else {
+            logger.warning("User not found: " + email);
+        }
+        return user;
     }
 
     @Override
     public AppUser loadUserByUsername(String email) throws UsernameNotFoundException {
+        logger.info("Loading user by username: " + email);
         AppUser appUser = appUserRepository.findByEmail(email);
 
         if (appUser == null || !appUser.isEnabled()) {
+            logger.warning("User not found or not enabled: " + email);
             throw new UsernameNotFoundException(String.format("%s not found.", email));
         }
 
+        logger.info("User loaded: " + appUser.getEmail());
         return appUser;
     }
 
     public Result<AppUser> add(UserDTO userDTO) {
+        logger.info("Adding new user: " + userDTO.getEmail());
         Result<AppUser> result = validate(userDTO.getEmail(), userDTO.getPassword());
         if (!result.isSuccess()) {
+            logger.warning("User validation failed: " + result.getMessages());
             return result;
         }
 
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
+        logger.info("Encoded password: " + encodedPassword);
 
         AppUser appUser = new AppUser(
                 0, // id
@@ -64,10 +80,7 @@ public class AppUserService implements UserDetailsService {
         );
 
         appUserRepository.save(appUser);
-
-        // Assign roles
-        Role defaultRole = roleRepository.findByName("USER");
-        appUserRepository.addRoleToUser(appUser.getId(), defaultRole.getId());
+        logger.info("User saved: " + appUser.getEmail());
 
         result.setPayload(appUser);
 
@@ -75,6 +88,7 @@ public class AppUserService implements UserDetailsService {
     }
 
     private Result<AppUser> validate(String email, String password) {
+        logger.info("Validating user email and password");
         Result<AppUser> result = new Result<>();
 
         if (email == null || email.isBlank()) {

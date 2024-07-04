@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { register } from "../services/authAPI";
+import { register } from "../services/AuthAPI";
 
 import ValidationSummary from "./ValidationSummary";
 
