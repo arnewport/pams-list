@@ -32,7 +32,9 @@ public class JwtRequestFilter extends BasicAuthenticationFilter {
 
             AppUser appUser = jwtConverter.getAppUserFromToken(authHeader);
             if (appUser == null) {
+                System.out.println("App User NULL!");
                 response.setStatus(403);
+                return;
             } else {
                 UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                         appUser, null, appUser.getAuthorities());

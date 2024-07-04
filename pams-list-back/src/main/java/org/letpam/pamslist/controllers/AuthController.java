@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 
 @RestController
 @ConditionalOnWebApplication
-@RequestMapping("/api/auth")  // Adding a base path for clarity
+//@RequestMapping("/api/auth")  // Adding a base path for clarity
 public class AuthController {
 
     private static final Logger logger = Logger.getLogger(AuthController.class.getName());

@@ -10,6 +10,7 @@ import java.security.Key;
 import java.util.List;
 import java.util.Date;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtConvert {
@@ -50,6 +51,11 @@ public class JwtConvert {
             String username = jws.getBody().getSubject();
             int userId = jws.getBody().get("user_id", Integer.class);
             List<String> authorities = jws.getBody().get("authorities", List.class);
+
+            // Convert authorities to SimpleGrantedAuthority
+            List<SimpleGrantedAuthority> simpleAuthorities = authorities.stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toList());
 
             // Using default values for the fields not available in the token
             String defaultFirstName = "";

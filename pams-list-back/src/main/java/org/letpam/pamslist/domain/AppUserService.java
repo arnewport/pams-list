@@ -120,7 +120,7 @@ public class AppUserService implements UserDetailsService {
                 result.addMessage("the provided email already exists");
             }
         } catch (UsernameNotFoundException e) {
-            // good!
+            result.addMessage("the provided email was not found");
         }
 
         return result;

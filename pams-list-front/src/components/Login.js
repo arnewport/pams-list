@@ -7,7 +7,7 @@ import ValidationSummary from "./ValidationSummary";
 
 function Login() {
   const [credentials, setCredentials] = useState({
-    username: "",
+    email: "",
     password: "",
   });
   const [errors, setErrors] = useState([]);
@@ -25,7 +25,7 @@ function Login() {
         navigate("/home");
       })
       .catch((err) => {
-        setErrors(["Invalid username/password."]);
+        setErrors(["Invalid email/password."]);
       });
   };
 
@@ -41,13 +41,13 @@ function Login() {
       <form onSubmit={handleSubmit}>
         <div>
           <div className="form-group">
-            <label htmlFor="label">Username</label>
+            <label htmlFor="label">Email Address</label>
             <input
               type="text"
               className="form-control align-left"
-              id="username"
-              name="username"
-              value={credentials.username}
+              id="email"
+              name="email"
+              value={credentials.email}
               onChange={handleChange}
               required
             />
