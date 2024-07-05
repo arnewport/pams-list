@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Landing from "./components/Landing";
 import Error from "./components/Error";
 import NotFound from "./components/NotFound";
+import Home from "./components/Home";
 
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
@@ -13,19 +14,21 @@ import { refreshToken, logout } from "./services/AuthAPI";
 
 const TIMEOUT_MILLISECONDS = 14 * 60 * 1000;
 
-
 function App() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
   const [initialized, setInitialized] = useState(false);
 
   const resetUser = useCallback(() => {
     refreshToken()
       .then((user) => {
+        console.log("User after token refresh:", user);
         setUser(user);
         setTimeout(resetUser, TIMEOUT_MILLISECONDS);
       })
       .catch((err) => {
-        console.log(err);
+        console.error("Token refresh failed:", err);
+        logout();
+        setUser(null);
       })
       .finally(() => setInitialized(true));
   }, []);
@@ -37,11 +40,14 @@ function App() {
   const auth = {
     user: user,
     handleLoggedIn(user) {
+      console.log("User logged in:", user);
       setUser(user);
       setTimeout(resetUser, TIMEOUT_MILLISECONDS);
     },
     hasAuthority(authority) {
-      return user?.authorities.includes(authority);
+      const hasAuth = user?.authorities.includes(authority.toLowerCase());
+      console.log(`Checking authority: ${authority}, has authority: ${hasAuth}`);
+      return hasAuth;
     },
     logout() {
       logout();
@@ -54,6 +60,7 @@ function App() {
   }
 
   const renderWithAuthority = (Component, ...authorities) => {
+    console.log("User roles:", auth.user?.authorities);
     for (let authority of authorities) {
       if (auth.hasAuthority(authority)) {
         return <Component />;
@@ -70,7 +77,7 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
-            {/* <Route path="/home" element={renderWithAuthority(Home, "USER")} /> */}
+            <Route path="/home" element={renderWithAuthority(Home, "ADMIN", "MANAGER", "MARKETER", "MATCHMAKER")} />
             <Route path="/error" element={<Error />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

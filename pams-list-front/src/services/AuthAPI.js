@@ -107,15 +107,22 @@ export function logout() {
 }
 
 function makeUserFromJwt(jwtToken) {
-  const jwtParts = jwtToken.split(".");
-  if (jwtParts.length === 3) {
-    const userData = atob(jwtParts[1]);
-    const decodedToken = JSON.parse(userData);
-    console.log("Decoded JWT token:", decodedToken);
-    return {
-      username: decodedToken.sub,
-      authorities: decodedToken.authorities,
-      userId: decodedToken.user_id
-    };
+  try {
+    const jwtParts = jwtToken.split(".");
+    if (jwtParts.length === 3) {
+      const payload = JSON.parse(atob(jwtParts[1]));
+      console.log("Decoded JWT token:", payload);
+      return {
+        username: payload.sub,
+        authorities: payload.authorities.map(a => a.toLowerCase()),
+        userId: payload.user_id,
+      };
+    } else {
+      console.error("Invalid JWT token format");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error decoding JWT token:", error);
+    return null;
   }
 }

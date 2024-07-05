@@ -8,15 +8,11 @@ function Home() {
   // context
   const { user } = useContext(AuthContext);
 
-  if (loading) {
-    return null;
-  }
-
   return (
     <>
       <div className="container-fluid">
         <h1 className="display-3 mt-3">Pam's List</h1>
-        <h3 className="display-5 mt-3">Welcome {user.username}!</h3>
+        <h3 className="display-5 mt-3">Welcome {user?.email}!</h3>
         <div className="d-flex flex-grow-1 justify-content-end">
           <Link to="/" className="btn btn-info btn-lg" onClick={logout}>
             Log Out
