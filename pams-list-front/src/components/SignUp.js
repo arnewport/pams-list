@@ -15,6 +15,7 @@ function SignUp() {
     organizationId: "",
     password: "",
     confirmPassword: "",
+    roleId: "", // New field for role ID
   });
   const [success, setSuccess] = useState(false);
 
@@ -123,6 +124,18 @@ function SignUp() {
                 id="organizationId"
                 name="organizationId"
                 value={credentials.organizationId}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="roleId">Role ID</label>
+              <input
+                type="text"
+                className="form-control align-left"
+                id="roleId"
+                name="roleId"
+                value={credentials.roleId} // New input for role ID
                 onChange={handleChange}
                 required
               />

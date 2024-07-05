@@ -65,7 +65,7 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    @PostMapping("/register")
+    @PostMapping("/signup")
     public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
         logger.info("Received registration request for email: " + userDTO.getEmail());
 

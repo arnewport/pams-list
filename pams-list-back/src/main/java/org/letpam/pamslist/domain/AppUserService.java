@@ -3,8 +3,8 @@ package org.letpam.pamslist.domain;
 import org.letpam.pamslist.data.AppUserRepository;
 import org.letpam.pamslist.data.RoleRepository;
 import org.letpam.pamslist.models.AppUser;
-import org.letpam.pamslist.models.Role;
 import org.letpam.pamslist.models.UserDTO;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
 public class AppUserService implements UserDetailsService {
@@ -65,6 +66,16 @@ public class AppUserService implements UserDetailsService {
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
         logger.info("Encoded password: " + encodedPassword);
 
+        // Retrieve the role from the repository
+        String roleName = roleRepository.findById(userDTO.getRoleId())
+                .map(role -> role.getName())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid role ID"));
+
+        // Convert SimpleGrantedAuthority to String
+        List<String> authorities = List.of(new SimpleGrantedAuthority(roleName)).stream()
+                .map(SimpleGrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
         AppUser appUser = new AppUser(
                 0, // id
                 userDTO.getEmail(), // email
@@ -76,10 +87,11 @@ public class AppUserService implements UserDetailsService {
                 Optional.ofNullable(userDTO.getFaxNumber()), // faxNumber
                 null, // lastLogin (assuming this is set later)
                 true, // enabled
-                List.of("USER") // authorities
+                authorities // authorities as List<String>
         );
 
         appUserRepository.save(appUser);
+        appUserRepository.addRoleToUser(appUser.getId(), userDTO.getRoleId());
         logger.info("User saved: " + appUser.getEmail());
 
         result.setPayload(appUser);
@@ -120,7 +132,7 @@ public class AppUserService implements UserDetailsService {
                 result.addMessage("the provided email already exists");
             }
         } catch (UsernameNotFoundException e) {
-            result.addMessage("the provided email was not found");
+            // Expected if the user does not exist
         }
 
         return result;

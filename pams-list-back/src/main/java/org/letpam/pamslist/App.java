@@ -18,9 +18,6 @@ public class App {
     @Bean
     public WebMvcConfigurer corsConfigurer() {
 
-        // Configure CORS globally versus
-        // controller-by-controller.
-        // Can be combined with @CrossOrigin.
         return new WebMvcConfigurer() {
 
             @Override

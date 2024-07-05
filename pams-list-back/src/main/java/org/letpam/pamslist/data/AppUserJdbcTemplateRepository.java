@@ -148,7 +148,7 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
     private void updateRoles(AppUser appUser) {
         logger.info("Updating roles for user: " + appUser.getId());
         try {
-            jdbcTemplate.update("delete from user_role where app_user_id = ?;", appUser.getId());
+            jdbcTemplate.update("delete from app_user_role where app_user_id = ?;", appUser.getId());
             for (var authority : appUser.getAuthorities()) {
                 String sql = """
                         insert into app_user_role (app_user_id, role_id)

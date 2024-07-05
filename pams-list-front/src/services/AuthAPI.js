@@ -42,11 +42,11 @@ export async function register(credentials) {
     body: JSON.stringify(credentials),
   };
 
-  console.log("Sending register request to:", url + "register");
+  console.log("Sending register request to:", url + "signup");
   console.log("Request body:", init.body);
 
   try {
-    const response = await fetch(url + "register", init);
+    const response = await fetch(url + "signup", init);
     console.log("Received response:", response);
     if (response.status === 400) {
       const result = await response.json();
