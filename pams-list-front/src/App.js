@@ -19,6 +19,13 @@ function App() {
   const [initialized, setInitialized] = useState(false);
 
   const resetUser = useCallback(() => {
+    const jwtToken = localStorage.getItem("jwt_token");
+    if (!jwtToken) {
+      console.log("No JWT token found, skipping refresh.");
+      setInitialized(true);
+      return;
+    }
+
     refreshToken()
       .then((user) => {
         console.log("User after token refresh:", user);
@@ -45,7 +52,11 @@ function App() {
       setTimeout(resetUser, TIMEOUT_MILLISECONDS);
     },
     hasAuthority(authority) {
-      const hasAuth = user?.authorities.includes(authority.toLowerCase());
+      if (!user) {
+        console.log("No user logged in, cannot check authority.");
+        return false;
+      }
+      const hasAuth = user.authorities.includes(authority.toLowerCase());
       console.log(`Checking authority: ${authority}, has authority: ${hasAuth}`);
       return hasAuth;
     },
@@ -62,7 +73,7 @@ function App() {
   const renderWithAuthority = (Component, ...authorities) => {
     console.log("User roles:", auth.user?.authorities);
     for (let authority of authorities) {
-      if (auth.hasAuthority(authority)) {
+      if (auth.hasAuthority(authority.toLowerCase())) {
         return <Component />;
       }
     }

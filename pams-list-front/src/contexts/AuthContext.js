@@ -1,8 +1,7 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useCallback } from "react";
 import { login, refreshToken, logout } from "../services/AuthAPI";
 
 const AuthContext = createContext();
-
 const TIMEOUT_MILLISECONDS = 14 * 60 * 1000;
 
 export const AuthProvider = ({ children }) => {
@@ -18,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const refreshUser = async () => {
+  const refreshUser = useCallback(async () => {
     try {
       const user = await refreshToken();
       setUser(user);
@@ -28,10 +27,14 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       logout();
     }
-  };
+  }, []);
 
   const hasAuthority = (authority) => {
-    return user?.authorities.includes(authority);
+    if (!user) {
+      console.log("No user logged in, cannot check authority.");
+      return false;
+    }
+    return user.authorities.includes(authority.toLowerCase());
   };
 
   const handleLogout = () => {
