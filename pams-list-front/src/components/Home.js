@@ -1,12 +1,15 @@
 import { useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { logout } from "../services/AuthAPI";
 import AuthContext from "../contexts/AuthContext";
 
 function Home() {
+  const { user, handleLogout } = useContext(AuthContext);
 
-  // context
-  const { user } = useContext(AuthContext);
+  console.log("Home component user:", user); // Log the user state in Home component
+
+  const onLogout = () => {
+    console.log("User clicked logout"); // Log the logout click action
+    handleLogout(); // Call handleLogout to update context and refresh page
+  };
 
   return (
     <>
@@ -14,9 +17,9 @@ function Home() {
         <h1 className="display-3 mt-3">Pam's List</h1>
         <h3 className="display-5 mt-3">Welcome {user?.email}!</h3>
         <div className="d-flex flex-grow-1 justify-content-end">
-          <Link to="/" className="btn btn-info btn-lg" onClick={logout}>
+          <button to="/" className="btn btn-info btn-lg" onClick={onLogout}>
             Log Out
-          </Link>
+          </button>
         </div>
       </div>
     </>

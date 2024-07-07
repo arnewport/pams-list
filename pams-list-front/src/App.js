@@ -11,6 +11,8 @@ import SignUp from "./components/SignUp";
 import AuthContext from "./contexts/AuthContext";
 
 import { refreshToken, logout } from "./services/AuthAPI";
+import NavBar from "./components/NavBar/NavBar";
+import PlaceholderComponent from "./components/PlaceholderComponent";
 
 const TIMEOUT_MILLISECONDS = 14 * 60 * 1000;
 
@@ -60,9 +62,10 @@ function App() {
       console.log(`Checking authority: ${authority}, has authority: ${hasAuth}`);
       return hasAuth;
     },
-    logout() {
+    handleLogout() { // Renamed to handleLogout for consistency
       logout();
       setUser(null);
+      window.location.replace("/"); // Ensure the page refreshes and redirects to the landing page
     },
   };
 
@@ -84,11 +87,23 @@ function App() {
     <main className="container">
       <AuthContext.Provider value={auth}>
         <Router>
+          <NavBar />
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/home" element={renderWithAuthority(Home, "ADMIN", "MANAGER", "MARKETER", "MATCHMAKER")} />
+            <Route path="/home" element={renderWithAuthority(Home, "admin", "matchmaker", "manager", "marketer")} />
+            <Route path="/admin/view" element={renderWithAuthority(PlaceholderComponent, "admin", "matchmaker")} />
+            <Route path="/admin/add-patients" element={renderWithAuthority(PlaceholderComponent, "admin", "matchmaker", "manager")} />
+            <Route path="/admin/confirm-acceptances" element={renderWithAuthority(PlaceholderComponent, "admin", "matchmaker")} />
+            <Route path="/admin/patient-archive" element={renderWithAuthority(PlaceholderComponent, "admin", "matchmaker")} />
+            <Route path="/admin/verify-users" element={renderWithAuthority(PlaceholderComponent, "admin", "matchmaker")} />
+            <Route path="/manager/view-patients" element={renderWithAuthority(PlaceholderComponent, "manager")} />
+            <Route path="/manager/add-patients" element={renderWithAuthority(PlaceholderComponent, "manager")} />
+            <Route path="/manager/my-added-patients" element={renderWithAuthority(PlaceholderComponent, "manager")} />
+            <Route path="/marketer/view-patients" element={renderWithAuthority(PlaceholderComponent, "marketer")} />
+            <Route path="/marketer/my-selected-patients" element={renderWithAuthority(PlaceholderComponent, "marketer")} />
+            <Route path="/marketer/my-accepted-patients" element={renderWithAuthority(PlaceholderComponent, "marketer")} />
             <Route path="/error" element={<Error />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useCallback } from "react";
+import React, { createContext, useState, useCallback, useEffect } from "react";
 import { login, refreshToken, logout } from "../services/AuthAPI";
 
 const AuthContext = createContext();
@@ -38,9 +38,15 @@ export const AuthProvider = ({ children }) => {
   };
 
   const handleLogout = () => {
+    console.log("Handling logout...")
     setUser(null);
     logout();
+    window.location.replace("/");
   };
+
+  useEffect(() => {
+    console.log("AuthContext user state:", user); // Log user state changes
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, handleLoggedIn, refreshUser, hasAuthority, handleLogout }}>

@@ -10,11 +10,11 @@ export async function login(credentials) {
     body: JSON.stringify(credentials),
   };
 
-  console.log("Sending login request to:", url + "/login");
+  console.log("Sending login request to:", url + "login");
   console.log("Request body:", init.body);
 
   try {
-    const response = await fetch(url + "/login", init);
+    const response = await fetch(url + "login", init);
     console.log("Received response:", response);
     if (response.status === 200) {
       const jwtTokenResponse = await response.json();
@@ -41,11 +41,11 @@ export async function register(credentials) {
     body: JSON.stringify(credentials),
   };
 
-  console.log("Sending register request to:", url + "/signup");
+  console.log("Sending register request to:", url + "signup");
   console.log("Request body:", init.body);
 
   try {
-    const response = await fetch(url + "/signup", init);
+    const response = await fetch(url + "signup", init);
     console.log("Received response:", response);
     if (response.status === 400) {
       const result = await response.json();
@@ -79,10 +79,10 @@ export async function refreshToken() {
     },
   };
 
-  console.log("Sending refresh token request to:", url + "/refresh-token");
+  console.log("Sending refresh token request to:", url + "refresh-token");
 
   try {
-    const response = await fetch(url + "/refresh-token", init);
+    const response = await fetch(url + "refresh-token", init);
     console.log("Received response:", response);
     if (response.status === 200) {
       const jwtTokenResponse = await response.json();
@@ -103,6 +103,7 @@ export async function refreshToken() {
 export function logout() {
   console.log("Logging out, removing JWT token from local storage.");
   localStorage.removeItem("jwt_token");
+  window.location.reload();
 }
 
 function makeUserFromJwt(jwtToken) {
