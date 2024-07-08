@@ -5,6 +5,7 @@ import Landing from "./components/Landing";
 import Error from "./components/Error";
 import NotFound from "./components/NotFound";
 import Home from "./components/Home";
+import Patients from "./components/Patients";
 
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
@@ -92,6 +93,7 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/patients" element={<Patients />} />
             <Route path="/home" element={renderWithAuthority(Home, "admin", "matchmaker", "manager", "marketer")} />
             <Route path="/admin/view" element={renderWithAuthority(PlaceholderComponent, "admin", "matchmaker")} />
             <Route path="/admin/add-patients" element={renderWithAuthority(PlaceholderComponent, "admin", "matchmaker", "manager")} />

@@ -7,7 +7,7 @@ const AdminMatchmakerNavBar = () => {
       <div className="container-fluid">
         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
           <li className="nav-item">
-            <NavLink className="nav-link" to="/admin/view">View</NavLink>
+            <NavLink className="nav-link" to="../patients">View</NavLink>
           </li>
           <li className="nav-item">
             <NavLink className="nav-link" to="/admin/add-patients">Add Patients</NavLink>
