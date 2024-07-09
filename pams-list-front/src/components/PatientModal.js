@@ -1,11 +1,11 @@
-import React, { useState }  from 'react';
+import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { archivePatient } from '../services/patientService';
+import { archivePatient, updatePatient } from '../services/patientService';
 
 const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
   const [editablePatient, setEditablePatient] = useState({ ...patient });
   const [isEditing, setIsEditing] = useState(false);
-  
+
   const calculateLengthOfStay = (dateOfHospitalAdmission) => {
     const today = new Date();
     const admissionDate = new Date(dateOfHospitalAdmission);
@@ -42,10 +42,10 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setEditablePatient((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value === '' ? null : value,
     }));
   };
 
@@ -55,44 +55,315 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
         <Modal.Title>Patient Details: {patient.firstName} {patient.lastName}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p><strong>ID:</strong> {patient.id}</p>
-        <p><strong>First Name:</strong> {patient.firstName}</p>
-        <p><strong>Last Name:</strong> {patient.lastName}</p>
-        <p><strong>Age:</strong> {patient.age}</p>
-        <p><strong>Sex:</strong> {patient.sex}</p>
-        <p><strong>Ready for Discharge:</strong> {patient.readyForDischarge ? 'Yes' : 'No'}</p>
-        <p><strong>Medicare:</strong> {patient.medicare ? 'Yes' : 'No'}</p>
-        <p><strong>MediCal:</strong> {patient.mediCal ? 'Yes' : 'No'}</p>
-        <p><strong>Medicare Plan:</strong> {patient.medicarePlan}</p>
-        <p><strong>MediCal Plan:</strong> {patient.mediCalPlan}</p>
-        <p><strong>HMO:</strong> {patient.hmo ? 'Yes' : 'No'}</p>
-        <p><strong>PPO:</strong> {patient.ppo ? 'Yes' : 'No'}</p>
-        <p><strong>VA:</strong> {patient.va ? 'Yes' : 'No'}</p>
-        <p><strong>LOA Available:</strong> {patient.loaAvailable ? 'Yes' : 'No'}</p>
-        <p><strong>ALW:</strong> {patient.alw ? 'Yes' : 'No'}</p>
-        <p><strong>Subacute:</strong> {patient.subacute ? 'Yes' : 'No'}</p>
-        <p><strong>ISO:</strong> {patient.iso ? 'Yes' : 'No'}</p>
-        <p><strong>Requires Locked:</strong> {patient.requiresLocked ? 'Yes' : 'No'}</p>
-        <p><strong>Patient Notes:</strong> {patient.patientNotes}</p>
-        <p><strong>Date of Hospital Admission:</strong> {new Date(patient.dateOfHospitalAdmission).toLocaleDateString()}</p>
-        <p><strong>Date Added to Pam List:</strong> {new Date(patient.dateAddedToPamList).toLocaleDateString()}</p>
-        <p><strong>Date Placed or Withdrawn:</strong> {new Date(patient.datePlacedOrWithdrawn).toLocaleDateString()}</p>
-        <p><strong>Total Interested:</strong> {patient.totalInterested}</p>
-        <p><strong>Total Rejected:</strong> {patient.totalRejected}</p>
-        <p><strong>Manager ID:</strong> {patient.managerId}</p>
-        <p><strong>Manager Organization ID:</strong> {patient.managerOrganizationId}</p>
-        <p><strong>Marketer ID:</strong> {patient.marketerId}</p>
-        <p><strong>Marketer Organization ID:</strong> {patient.marketerOrganizationId}</p>
-        <p><strong>Patient Status:</strong> {patient.patientStatus}</p>
-        <p><strong>Tracking Status:</strong> {patient.trackingStatus}</p>
-        <p><strong>Expected SNF Discharge Type:</strong> {patient.expectedSnfDischargeType}</p>
-        <p><strong>Archived:</strong> {patient.archived ? 'Yes' : 'No'}</p>
-        <p><strong>Length of Stay (days):</strong> {calculateLengthOfStay(patient.dateOfHospitalAdmission)}</p>
+        <Form>
+          <Form.Group>
+            <Form.Label>ID:</Form.Label>
+            <Form.Control type="text" value={editablePatient.id} readOnly />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>First Name:</Form.Label>
+            <Form.Control
+              type="text"
+              name="firstName"
+              value={editablePatient.firstName}
+              maxLength="100"
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Last Name:</Form.Label>
+            <Form.Control
+              type="text"
+              name="lastName"
+              value={editablePatient.lastName}
+              maxLength="100"
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Age:</Form.Label>
+            <Form.Control
+              type="number"
+              name="age"
+              value={editablePatient.age}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Sex:</Form.Label>
+            <Form.Control
+              as="select"
+              name="sex"
+              value={editablePatient.sex}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            >
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+            </Form.Control>
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Ready for Discharge:</Form.Label>
+            <Form.Check
+              type="checkbox"
+              name="readyForDischarge"
+              checked={editablePatient.readyForDischarge}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Medicare:</Form.Label>
+            <Form.Check
+              type="checkbox"
+              name="medicare"
+              checked={editablePatient.medicare}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>MediCal:</Form.Label>
+            <Form.Check
+              type="checkbox"
+              name="mediCal"
+              checked={editablePatient.mediCal}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Medicare Plan:</Form.Label>
+            <Form.Control
+              type="text"
+              name="medicarePlan"
+              value={editablePatient.medicarePlan}
+              maxLength="255"
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>MediCal Plan:</Form.Label>
+            <Form.Control
+              type="text"
+              name="mediCalPlan"
+              value={editablePatient.mediCalPlan}
+              maxLength="255"
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>HMO:</Form.Label>
+            <Form.Check
+              type="checkbox"
+              name="hmo"
+              checked={editablePatient.hmo}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>PPO:</Form.Label>
+            <Form.Check
+              type="checkbox"
+              name="ppo"
+              checked={editablePatient.ppo}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>VA:</Form.Label>
+            <Form.Check
+              type="checkbox"
+              name="va"
+              checked={editablePatient.va}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>LOA Available:</Form.Label>
+            <Form.Check
+              type="checkbox"
+              name="loaAvailable"
+              checked={editablePatient.loaAvailable}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>ALW:</Form.Label>
+            <Form.Check
+              type="checkbox"
+              name="alw"
+              checked={editablePatient.alw}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Subacute:</Form.Label>
+            <Form.Check
+              type="checkbox"
+              name="subacute"
+              checked={editablePatient.subacute}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>ISO:</Form.Label>
+            <Form.Check
+              type="checkbox"
+              name="iso"
+              checked={editablePatient.iso}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Requires Locked:</Form.Label>
+            <Form.Check
+              type="checkbox"
+              name="requiresLocked"
+              checked={editablePatient.requiresLocked}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Patient Notes:</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              name="patientNotes"
+              value={editablePatient.patientNotes}
+              maxLength="1000"
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Date of Hospital Admission:</Form.Label>
+            <Form.Control
+              type="date"
+              name="dateOfHospitalAdmission"
+              value={editablePatient.dateOfHospitalAdmission ? new Date(editablePatient.dateOfHospitalAdmission).toISOString().split('T')[0] : ''}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Expected SNF Discharge Type:</Form.Label>
+            <Form.Control
+              as="select"
+              name="expectedSnfDischargeType"
+              value={editablePatient.expectedSnfDischargeType}
+              readOnly={!isEditing}
+              onChange={handleChange}
+            >
+              <option value="unknown">Unknown</option>
+              <option value="alw">ALW</option>
+              <option value="pp">PP</option>
+              <option value="home">Home</option>
+            </Form.Control>
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Length of Stay (days):</Form.Label>
+            <Form.Control
+              type="text"
+              value={calculateLengthOfStay(editablePatient.dateOfHospitalAdmission)}
+              readOnly
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Total Interested:</Form.Label>
+            <Form.Control
+              type="number"
+              value={editablePatient.totalInterested}
+              readOnly
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Total Rejected:</Form.Label>
+            <Form.Control
+              type="number"
+              value={editablePatient.totalRejected}
+              readOnly
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Manager ID:</Form.Label>
+            <Form.Control
+              type="number"
+              value={editablePatient.managerId}
+              readOnly
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Manager Organization ID:</Form.Label>
+            <Form.Control
+              type="number"
+              value={editablePatient.managerOrganizationId}
+              readOnly
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Marketer ID:</Form.Label>
+            <Form.Control
+              type="number"
+              value={editablePatient.marketerId}
+              readOnly
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Marketer Organization ID:</Form.Label>
+            <Form.Control
+              type="number"
+              value={editablePatient.marketerOrganizationId}
+              readOnly
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Patient Status:</Form.Label>
+            <Form.Control
+              type="text"
+              value={editablePatient.patientStatus}
+              readOnly
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Tracking Status:</Form.Label>
+            <Form.Control
+              type="text"
+              value={editablePatient.trackingStatus}
+              readOnly
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Label>Archived:</Form.Label>
+            <Form.Control
+              type="text"
+              value={editablePatient.archived ? 'Yes' : 'No'}
+              readOnly
+            />
+          </Form.Group>
+        </Form>
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>Close</Button>
-        <Button variant="warning">Edit Patient</Button> {/* Placeholder for Edit Patient functionality */}
-        <Button variant="danger" onClick={handleArchive}>Remove Patient</Button> {/* Placeholder for Remove Patient functionality */}
+        {isEditing ? (
+          <Button variant="success" onClick={handleSave}>Save</Button>
+        ) : (
+          <Button variant="warning" onClick={handleEdit}>Edit Patient</Button>
+        )}
+        <Button variant="danger" onClick={handleArchive}>Remove Patient</Button>
       </Modal.Footer>
     </Modal>
   );

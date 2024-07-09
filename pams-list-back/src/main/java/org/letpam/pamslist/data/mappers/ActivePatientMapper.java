@@ -10,6 +10,9 @@ public class ActivePatientMapper implements RowMapper<Patient> {
 
     @Override
     public Patient mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Integer marketerId = rs.getObject("marketer_id") != null ? rs.getInt("marketer_id") : null;
+        Integer marketerOrganizationId = rs.getObject("marketer_organization_id") != null ? rs.getInt("marketer_organization_id") : null;
+
         return new Patient(
                 rs.getInt("id"),
                 rs.getString("first_name"),
@@ -37,8 +40,8 @@ public class ActivePatientMapper implements RowMapper<Patient> {
                 rs.getInt("total_rejected"),
                 rs.getInt("manager_id"),
                 rs.getInt("manager_organization_id"),
-                rs.getInt("marketer_id"),
-                rs.getInt("marketer_organization_id"),
+                marketerId,
+                marketerOrganizationId,
                 rs.getString("patient_status"),
                 rs.getString("tracking_status"),
                 rs.getString("expected_snf_discharge_type"),
@@ -46,4 +49,3 @@ public class ActivePatientMapper implements RowMapper<Patient> {
         );
     }
 }
-
