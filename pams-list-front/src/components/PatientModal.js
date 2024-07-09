@@ -15,6 +15,16 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
   };
 
   const handleArchive = async () => {
+    if (isEditing) {
+      try {
+        const updatedPatient = await updatePatient(patient.id, editablePatient);
+        onUpdate(updatedPatient);
+      } catch (error) {
+        console.error('Error updating the patient:', error);
+        alert('Failed to update the patient. Please try again.');
+        return;
+      }
+    }
     try {
       await archivePatient(patient.id);
       onArchive(patient.id);
@@ -24,6 +34,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
       alert('Error archiving the patient: ' + error);
     }
   };
+  
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -58,14 +69,14 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
         <Form>
           <Form.Group>
             <Form.Label>ID:</Form.Label>
-            <Form.Control type="text" value={editablePatient.id} readOnly />
+            <Form.Control type="text" value={editablePatient.id || ''} readOnly />
           </Form.Group>
           <Form.Group>
             <Form.Label>First Name:</Form.Label>
             <Form.Control
               type="text"
               name="firstName"
-              value={editablePatient.firstName}
+              value={editablePatient.firstName || ''}
               maxLength="100"
               readOnly={!isEditing}
               onChange={handleChange}
@@ -76,7 +87,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Control
               type="text"
               name="lastName"
-              value={editablePatient.lastName}
+              value={editablePatient.lastName || ''}
               maxLength="100"
               readOnly={!isEditing}
               onChange={handleChange}
@@ -87,7 +98,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Control
               type="number"
               name="age"
-              value={editablePatient.age}
+              value={editablePatient.age || ''}
               readOnly={!isEditing}
               onChange={handleChange}
             />
@@ -97,7 +108,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Control
               as="select"
               name="sex"
-              value={editablePatient.sex}
+              value={editablePatient.sex || ''}
               readOnly={!isEditing}
               onChange={handleChange}
             >
@@ -110,7 +121,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Check
               type="checkbox"
               name="readyForDischarge"
-              checked={editablePatient.readyForDischarge}
+              checked={editablePatient.readyForDischarge || false}
               readOnly={!isEditing}
               onChange={handleChange}
             />
@@ -120,7 +131,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Check
               type="checkbox"
               name="medicare"
-              checked={editablePatient.medicare}
+              checked={editablePatient.medicare || false}
               readOnly={!isEditing}
               onChange={handleChange}
             />
@@ -130,7 +141,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Check
               type="checkbox"
               name="mediCal"
-              checked={editablePatient.mediCal}
+              checked={editablePatient.mediCal || false}
               readOnly={!isEditing}
               onChange={handleChange}
             />
@@ -140,7 +151,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Control
               type="text"
               name="medicarePlan"
-              value={editablePatient.medicarePlan}
+              value={editablePatient.medicarePlan || ''}
               maxLength="255"
               readOnly={!isEditing}
               onChange={handleChange}
@@ -151,7 +162,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Control
               type="text"
               name="mediCalPlan"
-              value={editablePatient.mediCalPlan}
+              value={editablePatient.mediCalPlan || ''}
               maxLength="255"
               readOnly={!isEditing}
               onChange={handleChange}
@@ -162,7 +173,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Check
               type="checkbox"
               name="hmo"
-              checked={editablePatient.hmo}
+              checked={editablePatient.hmo || false}
               readOnly={!isEditing}
               onChange={handleChange}
             />
@@ -172,7 +183,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Check
               type="checkbox"
               name="ppo"
-              checked={editablePatient.ppo}
+              checked={editablePatient.ppo || false}
               readOnly={!isEditing}
               onChange={handleChange}
             />
@@ -182,7 +193,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Check
               type="checkbox"
               name="va"
-              checked={editablePatient.va}
+              checked={editablePatient.va || false}
               readOnly={!isEditing}
               onChange={handleChange}
             />
@@ -192,7 +203,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Check
               type="checkbox"
               name="loaAvailable"
-              checked={editablePatient.loaAvailable}
+              checked={editablePatient.loaAvailable || false}
               readOnly={!isEditing}
               onChange={handleChange}
             />
@@ -202,7 +213,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Check
               type="checkbox"
               name="alw"
-              checked={editablePatient.alw}
+              checked={editablePatient.alw || false}
               readOnly={!isEditing}
               onChange={handleChange}
             />
@@ -212,7 +223,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Check
               type="checkbox"
               name="subacute"
-              checked={editablePatient.subacute}
+              checked={editablePatient.subacute || false}
               readOnly={!isEditing}
               onChange={handleChange}
             />
@@ -222,7 +233,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Check
               type="checkbox"
               name="iso"
-              checked={editablePatient.iso}
+              checked={editablePatient.iso || false}
               readOnly={!isEditing}
               onChange={handleChange}
             />
@@ -232,7 +243,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Check
               type="checkbox"
               name="requiresLocked"
-              checked={editablePatient.requiresLocked}
+              checked={editablePatient.requiresLocked || false}
               readOnly={!isEditing}
               onChange={handleChange}
             />
@@ -243,7 +254,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
               as="textarea"
               rows={3}
               name="patientNotes"
-              value={editablePatient.patientNotes}
+              value={editablePatient.patientNotes || ''}
               maxLength="1000"
               readOnly={!isEditing}
               onChange={handleChange}
@@ -264,7 +275,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Control
               as="select"
               name="expectedSnfDischargeType"
-              value={editablePatient.expectedSnfDischargeType}
+              value={editablePatient.expectedSnfDischargeType || ''}
               readOnly={!isEditing}
               onChange={handleChange}
             >
@@ -286,7 +297,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Label>Total Interested:</Form.Label>
             <Form.Control
               type="number"
-              value={editablePatient.totalInterested}
+              value={editablePatient.totalInterested || 0}
               readOnly
             />
           </Form.Group>
@@ -294,7 +305,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Label>Total Rejected:</Form.Label>
             <Form.Control
               type="number"
-              value={editablePatient.totalRejected}
+              value={editablePatient.totalRejected || 0}
               readOnly
             />
           </Form.Group>
@@ -302,7 +313,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Label>Manager ID:</Form.Label>
             <Form.Control
               type="number"
-              value={editablePatient.managerId}
+              value={editablePatient.managerId || ''}
               readOnly
             />
           </Form.Group>
@@ -310,7 +321,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Label>Manager Organization ID:</Form.Label>
             <Form.Control
               type="number"
-              value={editablePatient.managerOrganizationId}
+              value={editablePatient.managerOrganizationId || ''}
               readOnly
             />
           </Form.Group>
@@ -318,7 +329,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Label>Marketer ID:</Form.Label>
             <Form.Control
               type="number"
-              value={editablePatient.marketerId}
+              value={editablePatient.marketerId || ''}
               readOnly
             />
           </Form.Group>
@@ -326,7 +337,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Label>Marketer Organization ID:</Form.Label>
             <Form.Control
               type="number"
-              value={editablePatient.marketerOrganizationId}
+              value={editablePatient.marketerOrganizationId || ''}
               readOnly
             />
           </Form.Group>
@@ -334,7 +345,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Label>Patient Status:</Form.Label>
             <Form.Control
               type="text"
-              value={editablePatient.patientStatus}
+              value={editablePatient.patientStatus || ''}
               readOnly
             />
           </Form.Group>
@@ -342,7 +353,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
             <Form.Label>Tracking Status:</Form.Label>
             <Form.Control
               type="text"
-              value={editablePatient.trackingStatus}
+              value={editablePatient.trackingStatus || ''}
               readOnly
             />
           </Form.Group>
