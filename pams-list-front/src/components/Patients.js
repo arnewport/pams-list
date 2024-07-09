@@ -51,6 +51,12 @@ const Patients = () => {
     setPatients(prevPatients => prevPatients.filter(patient => patient.id !== patientId));
   };
 
+  const handleUpdatePatient = (updatedPatient) => {
+    setPatients(prevPatients =>
+      prevPatients.map(patient => (patient.id === updatedPatient.id ? updatedPatient : patient))
+    );
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -146,6 +152,7 @@ const Patients = () => {
             handleClose={handleCloseModal}
             patient={selectedPatient}
             onArchive={handleArchivePatient}
+            onUpdate={handleUpdatePatient}
           />
         </Suspense>
       )}

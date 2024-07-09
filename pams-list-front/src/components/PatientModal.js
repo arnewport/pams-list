@@ -1,8 +1,11 @@
-import React from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import React, { useState }  from 'react';
+import { Modal, Button, Form } from 'react-bootstrap';
 import { archivePatient } from '../services/patientService';
 
-const PatientModal = ({ show, handleClose, patient, onArchive }) => {
+const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
+  const [editablePatient, setEditablePatient] = useState({ ...patient });
+  const [isEditing, setIsEditing] = useState(false);
+  
   const calculateLengthOfStay = (dateOfHospitalAdmission) => {
     const today = new Date();
     const admissionDate = new Date(dateOfHospitalAdmission);
@@ -20,6 +23,30 @@ const PatientModal = ({ show, handleClose, patient, onArchive }) => {
       console.error('Error archiving the patient:', error);
       alert('Error archiving the patient: ' + error);
     }
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleSave = async () => {
+    try {
+      const updatedPatient = await updatePatient(patient.id, editablePatient);
+      onUpdate(updatedPatient);
+      setIsEditing(false);
+      handleClose();
+    } catch (error) {
+      console.error('Error updating the patient:', error);
+      alert('Failed to update the patient. Please try again.');
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEditablePatient((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   return (
