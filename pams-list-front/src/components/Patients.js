@@ -13,7 +13,7 @@ const calculateLengthOfStay = (dateOfHospitalAdmission) => {
 const PatientModal = lazy(() => import('./PatientModal'));
 
 const Patients = () => {
-  const { patients, loading, error } = usePatients();
+  const { patients, loading, error, setPatients } = usePatients();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -45,6 +45,10 @@ const Patients = () => {
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedPatient(null);
+  };
+
+  const handleArchivePatient = (patientId) => {
+    setPatients(prevPatients => prevPatients.filter(patient => patient.id !== patientId));
   };
 
   if (loading) {
@@ -141,6 +145,7 @@ const Patients = () => {
             show={showModal}
             handleClose={handleCloseModal}
             patient={selectedPatient}
+            onArchive={handleArchivePatient}
           />
         </Suspense>
       )}

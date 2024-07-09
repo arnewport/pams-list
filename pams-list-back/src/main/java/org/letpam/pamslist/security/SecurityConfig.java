@@ -30,14 +30,15 @@ public class SecurityConfig {
 
         http.cors(cors -> cors.configure(http));
 
+        // TODO: unify naming conventions for all API endpoints and make SecurityConfig stricter
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, "/login").permitAll()
                 .requestMatchers(HttpMethod.POST, "/signup").permitAll()
                 .requestMatchers(HttpMethod.POST, "/refresh-token").authenticated()
                 .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/v1/**").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/api/v1/**").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/api/v1/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/**").permitAll()
                 .requestMatchers("/**").denyAll());
 
         http.addFilter(new JwtRequestFilter(authenticationManager(authConfig), jwtConverter));

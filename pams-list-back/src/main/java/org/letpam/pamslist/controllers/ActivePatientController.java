@@ -38,8 +38,8 @@ public class ActivePatientController {
     }
 
     @PutMapping("/{id}/archive")
-    public ResponseEntity<Void> archive(@PathVariable int id) {
+    public ResponseEntity<String> archive(@PathVariable int id) {
         activePatientService.archive(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("{}");
     }
 }

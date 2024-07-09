@@ -13,3 +13,21 @@ export const fetchPatients = async () => {
     throw error;
   }
 };
+
+export const archivePatient = async (patientId) => {
+  try {
+    const response = await fetch(`${url}patients/${patientId}/archive`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Error archiving patient:', error);
+    throw error;
+  }
+};

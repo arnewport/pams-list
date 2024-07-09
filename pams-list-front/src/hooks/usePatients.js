@@ -21,7 +21,7 @@ const usePatients = () => {
     getPatients();
   }, []);
 
-  return { patients, loading, error };
+  return { patients, loading, error, setPatients };
 };
 
 export default usePatients;
