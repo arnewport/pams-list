@@ -1,23 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import AuthContext from "./contexts/AuthContext";
+import { refreshToken, logout } from "./services/AuthAPI";
 
 import Landing from "./components/Landing";
-import Error from "./components/Error";
-import NotFound from "./components/NotFound";
-import Home from "./components/Home";
-import Patients from "./components/Patients";
-
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
-import AuthContext from "./contexts/AuthContext";
-
-import { refreshToken, logout } from "./services/AuthAPI";
+import Home from "./components/Home";
+import Error from "./components/Error";
+import NotFound from "./components/NotFound";
+import Patients from "./components/Patients";
 import NavBar from "./components/NavBar/NavBar";
 import PlaceholderComponent from "./components/PlaceholderComponent";
 
 const TIMEOUT_MILLISECONDS = 14 * 60 * 1000;
 
-function App() {
+const App = () => {
   const [user, setUser] = useState(null);
   const [initialized, setInitialized] = useState(false);
 
@@ -88,7 +86,6 @@ function App() {
     <main className="container">
       <AuthContext.Provider value={auth}>
         <Router>
-          <NavBar />
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />

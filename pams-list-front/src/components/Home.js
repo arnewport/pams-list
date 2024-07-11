@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import AuthContext from "../contexts/AuthContext";
+import NavBar from "./NavBar/NavBar";
 
 function Home() {
   const { user, handleLogout } = useContext(AuthContext);
@@ -13,6 +14,7 @@ function Home() {
 
   return (
     <>
+    <NavBar />
       <div className="container-fluid">
         <h1 className="display-3 mt-3">Pam's List</h1>
         <h3 className="display-5 mt-3">Welcome {user?.email}!</h3>

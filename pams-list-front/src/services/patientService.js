@@ -51,3 +51,23 @@ export const updatePatient = async (patientId, updatedPatient) => {
     throw error;
   }
 };
+
+export const addPatient = async (patient) => {
+  try {
+    const response = await fetch(`${url}/patients`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(patient),
+    });
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error adding patient:', error);
+    throw error;
+  }
+};

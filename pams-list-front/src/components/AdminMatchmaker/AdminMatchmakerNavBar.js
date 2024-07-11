@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-const AdminMatchmakerNavBar = () => {
+const AdminMatchmakerNavBar = ({ onOpenAddModal }) => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
@@ -10,7 +10,7 @@ const AdminMatchmakerNavBar = () => {
             <NavLink className="nav-link" to="../patients">View</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link" to="/admin/add-patients">Add Patients</NavLink>
+            <NavLink className="nav-link" to="#" onClick={onOpenAddModal}>Add Patients</NavLink>
           </li>
           <li className="nav-item">
             <NavLink className="nav-link" to="/admin/confirm-acceptances">Confirm Acceptances</NavLink>
