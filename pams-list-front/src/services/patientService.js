@@ -54,7 +54,7 @@ export const updatePatient = async (patientId, updatedPatient) => {
 
 export const addPatient = async (patient) => {
   try {
-    const response = await fetch(`${url}/patients`, {
+    const response = await fetch(`${url}patients`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
