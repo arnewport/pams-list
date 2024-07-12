@@ -16,6 +16,17 @@ public class MarketerInterestController {
         this.service = service;
     }
 
+    @GetMapping("/check-interest")
+    public ResponseEntity<MarketerInterest> checkInterest(
+            @RequestParam int marketerId, @RequestParam int patientId) {
+        MarketerInterest interest = service.findByMarketerIdAndPatientId(marketerId, patientId);
+        if (interest != null) {
+            return ResponseEntity.ok(interest);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
     @PostMapping
     public ResponseEntity<MarketerInterest> create(@RequestBody MarketerInterest marketerInterest) {
         MarketerInterest created = service.create(marketerInterest);

@@ -15,6 +15,13 @@ public class MarketerInterestJdbcRepository implements MarketerInterestRepositor
     }
 
     @Override
+    public MarketerInterest findByMarketerIdAndPatientId(int marketerId, int patientId) {
+        final String sql = "SELECT * FROM marketer_interest WHERE marketer_id = ? AND patient_id = ?";
+        return jdbcTemplate.queryForObject(sql, new MarketerInterestMapper(), marketerId, patientId);
+    }
+
+
+    @Override
     public MarketerInterest create(MarketerInterest marketerInterest) {
         final String sql = "INSERT INTO marketer_interest (marketer_id, patient_id, date_interested, date_accepted, date_rejected, rejection_reason, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql,

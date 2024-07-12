@@ -1,10 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { archivePatient, updatePatient } from '../services/patientService';
+import { checkMarketerInterest, createMarketerInterest, acceptMarketerInterest, rejectMarketerInterest } from '../services/marketerInterestService';
 
 const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRole, userId }) => {
   const [editablePatient, setEditablePatient] = useState({ ...patient });
   const [isEditing, setIsEditing] = useState(false);
+  const [marketerInterest, setMarketerInterest] = useState(null);
+
+  useEffect(() => {
+    if (userRole === 'marketer') {
+      checkMarketerInterest(userId, patient.id).then(response => {
+        if (response.status === 200) {
+          setMarketerInterest(response.data);
+        } else {
+          setMarketerInterest(null);
+        }
+      }).catch(error => {
+        console.error("Error checking marketer interest:", error);
+      });
+    }
+  }, [userId, patient.id, userRole]);
 
   const calculateLengthOfStay = (dateOfHospitalAdmission) => {
     const today = new Date();
@@ -58,6 +74,50 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
       ...prev,
       [name]: type === 'checkbox' ? checked : value === '' ? null : value,
     }));
+  };
+
+  const handleInterested = async () => {
+    const marketerInterest = {
+      marketerId: userId, 
+      patientId: patient.id,
+      dateInterested: new Date(),
+      dateAccepted: null,
+      dateRejected: null,
+      rejectionReason: '',
+      status: 'interested'
+    };
+
+    try {
+      const response = await createMarketerInterest(marketerInterest);
+      if (response.status === 201) {
+        alert('Interest registered successfully');
+      } else {
+        alert('Failed to register interest');
+      }
+    } catch (error) {
+      console.error('Error registering interest:', error);
+      alert('Error registering interest: ' + error);
+    }
+  };
+
+  const handleAccept = async () => {
+    try {
+      await acceptMarketerInterest(userId, patient.id);
+      setMarketerInterest((prev) => ({ ...prev, status: 'accepted', dateAccepted: new Date() }));
+    } catch (error) {
+      console.error('Error accepting the patient:', error);
+      alert('Failed to accept the patient. Please try again.');
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      await rejectMarketerInterest(userId, patient.id);
+      setMarketerInterest((prev) => ({ ...prev, status: 'rejected', dateRejected: new Date() }));
+    } catch (error) {
+      console.error('Error rejecting the patient:', error);
+      alert('Failed to reject the patient. Please try again.');
+    }
   };
 
   return (
@@ -379,9 +439,18 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
             <Button variant="danger" onClick={handleArchive}>Remove Patient</Button>
           </>
         ) : null}
-        {userRole === 'marketer' ? (
-          <Button variant="primary" onClick={() => alert('Interested functionality goes here')}>I'm Interested</Button>
-        ) : null}
+        {userRole === 'marketer' && (
+          marketerInterest ? (
+            marketerInterest.status === 'interested' ? (
+              <>
+                <Button variant="success" onClick={handleAccept}>Accept Patient</Button>
+                <Button variant="danger" onClick={handleReject}>Reject Patient</Button>
+              </>
+            ) : null
+          ) : (
+            <Button variant="info" onClick={handleInterested}>I'm Interested</Button>
+          )
+        )}
       </Modal.Footer>
     </Modal>
   );

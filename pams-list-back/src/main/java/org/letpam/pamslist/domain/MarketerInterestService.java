@@ -12,6 +12,10 @@ public class MarketerInterestService {
         this.repository = repository;
     }
 
+    public MarketerInterest findByMarketerIdAndPatientId(int marketerId, int patientId) {
+        return repository.findByMarketerIdAndPatientId(marketerId, patientId);
+    }
+
     public MarketerInterest create(MarketerInterest marketerInterest) {
         return repository.create(marketerInterest);
     }

@@ -2,7 +2,7 @@ const url = process.env.REACT_APP_API_URL;
 
 export const fetchPatients = async () => {
   try {
-    const response = await fetch(url + "patients");
+    const response = await fetch(`${url}patients`);
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
