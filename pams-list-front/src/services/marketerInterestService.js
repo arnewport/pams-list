@@ -1,27 +1,27 @@
 const url = process.env.REACT_APP_API_URL;
 
 export const checkMarketerInterest = async (marketerId, patientId) => {
-    try {
-        const response = await fetch(`${url}api/marketer-interest/check-interest?marketerId=${marketerId}&patientId=${patientId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+  try {
+      const response = await fetch(`${url}api/marketer-interest/check-interest?marketerId=${marketerId}&patientId=${patientId}`, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+      });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+      if (!response.ok) {
+          if (response.status === 404) {
+              return null;
+          }
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-        const data = await response.json();
-        return { status: response.status, data };
-    } catch (error) {
-        if (error.message.includes('status: 404')) {
-            return { status: 404, data: null };
-        }
-        console.error('Error checking marketer interest:', error);
-        throw error;
-    }
+      const data = await response.json();
+      return { status: response.status, data };
+  } catch (error) {
+      console.error('Error checking marketer interest:', error);
+      throw error;
+  }
 };
 
 export const createMarketerInterest = async (marketerInterest) => {

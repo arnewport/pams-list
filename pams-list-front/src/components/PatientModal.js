@@ -9,18 +9,20 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
   const [marketerInterest, setMarketerInterest] = useState(null);
 
   useEffect(() => {
-    if (userRole === 'marketer') {
-      checkMarketerInterest(userId, patient.id).then(response => {
-        if (response.status === 200) {
-          setMarketerInterest(response.data);
-        } else {
-          setMarketerInterest(null);
-        }
-      }).catch(error => {
-        console.error("Error checking marketer interest:", error);
-      });
-    }
+      if (userRole === 'marketer') {
+          checkMarketerInterest(userId, patient.id).then(response => {
+              if (response) {
+                  setMarketerInterest(response.data);
+              } else {
+                  console.log("No marketer interest found for this patient.");
+                  setMarketerInterest(null);
+              }
+          }).catch(error => {
+              console.error("Error checking marketer interest:", error);
+          });
+      }
   }, [userId, patient.id, userRole]);
+
 
   const calculateLengthOfStay = (dateOfHospitalAdmission) => {
     const today = new Date();

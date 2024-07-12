@@ -2,8 +2,11 @@ package org.letpam.pamslist.data;
 
 import org.letpam.pamslist.models.MarketerInterest;
 import org.letpam.pamslist.data.mappers.MarketerInterestMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public class MarketerInterestJdbcRepository implements MarketerInterestRepository {
@@ -15,9 +18,14 @@ public class MarketerInterestJdbcRepository implements MarketerInterestRepositor
     }
 
     @Override
-    public MarketerInterest findByMarketerIdAndPatientId(int marketerId, int patientId) {
-        final String sql = "SELECT * FROM marketer_interest WHERE marketer_id = ? AND patient_id = ?";
-        return jdbcTemplate.queryForObject(sql, new MarketerInterestMapper(), marketerId, patientId);
+    public Optional<MarketerInterest> findByMarketerIdAndPatientId(int marketerId, int patientId) {
+        try {
+            String sql = "SELECT * FROM marketer_interest WHERE marketer_id = ? AND patient_id = ?";
+            MarketerInterest marketerInterest = jdbcTemplate.queryForObject(sql, new MarketerInterestMapper(), marketerId, patientId);
+            return Optional.ofNullable(marketerInterest);
+        } catch (EmptyResultDataAccessException ex) {
+            return Optional.empty();
+        }
     }
 
 
