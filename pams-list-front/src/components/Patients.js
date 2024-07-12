@@ -17,12 +17,15 @@ const AddPatientModal = lazy(() => import('./AddPatientModal'));
 
 const Patients = () => {
   const { patients, loading, error, setPatients } = usePatients();
-  const { handleLogout } = useContext(AuthContext);
+  const { user, handleLogout } = useContext(AuthContext);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const patientsPerPage = 20;
+
+  const currentUserRole = user?.authorities[0];
+  const currentUserId = user?.userId;
 
   // Calculate the current patients to display
   const indexOfLastPatient = currentPage * patientsPerPage;
@@ -174,6 +177,8 @@ const Patients = () => {
               patient={selectedPatient}
               onArchive={handleArchivePatient}
               onUpdate={handleUpdatePatient}
+              userRole={currentUserRole}
+              userId={currentUserId}
             />
           </Suspense>
         )}

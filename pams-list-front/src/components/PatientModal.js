@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { archivePatient, updatePatient } from '../services/patientService';
 
-const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
+const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRole, userId }) => {
   const [editablePatient, setEditablePatient] = useState({ ...patient });
   const [isEditing, setIsEditing] = useState(false);
 
@@ -369,12 +369,19 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate }) => {
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>Close</Button>
-        {isEditing ? (
-          <Button variant="success" onClick={handleSave}>Save</Button>
-        ) : (
-          <Button variant="warning" onClick={handleEdit}>Edit Patient</Button>
-        )}
-        <Button variant="danger" onClick={handleArchive}>Remove Patient</Button>
+        {userRole === 'admin' || userRole === 'matchmaker' || (userRole === 'manager' && userId === patient.managerId) ? (
+          <>
+            {isEditing ? (
+              <Button variant="success" onClick={handleSave}>Save</Button>
+            ) : (
+              <Button variant="warning" onClick={handleEdit}>Edit Patient</Button>
+            )}
+            <Button variant="danger" onClick={handleArchive}>Remove Patient</Button>
+          </>
+        ) : null}
+        {userRole === 'marketer' ? (
+          <Button variant="primary" onClick={() => alert('Interested functionality goes here')}>I'm Interested</Button>
+        ) : null}
       </Modal.Footer>
     </Modal>
   );

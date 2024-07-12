@@ -22,7 +22,7 @@ function Login() {
     login(credentials)
       .then((user) => {
         handleLoggedIn(user);
-        navigate("/view");
+        navigate("/patients");
       })
       .catch((err) => {
         setErrors(["Invalid email/password."]);

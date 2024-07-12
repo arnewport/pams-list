@@ -92,17 +92,6 @@ const App = () => {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/patients" element={<Patients />} />
             <Route path="/home" element={renderWithAuthority(Home, "admin", "matchmaker", "manager", "marketer")} />
-            <Route path="/admin/view" element={renderWithAuthority(PlaceholderComponent, "admin", "matchmaker")} />
-            <Route path="/admin/add-patients" element={renderWithAuthority(PlaceholderComponent, "admin", "matchmaker", "manager")} />
-            <Route path="/admin/confirm-acceptances" element={renderWithAuthority(PlaceholderComponent, "admin", "matchmaker")} />
-            <Route path="/admin/patient-archive" element={renderWithAuthority(PlaceholderComponent, "admin", "matchmaker")} />
-            <Route path="/admin/verify-users" element={renderWithAuthority(PlaceholderComponent, "admin", "matchmaker")} />
-            <Route path="/manager/view-patients" element={renderWithAuthority(PlaceholderComponent, "manager")} />
-            <Route path="/manager/add-patients" element={renderWithAuthority(PlaceholderComponent, "manager")} />
-            <Route path="/manager/my-added-patients" element={renderWithAuthority(PlaceholderComponent, "manager")} />
-            <Route path="/marketer/view-patients" element={renderWithAuthority(PlaceholderComponent, "marketer")} />
-            <Route path="/marketer/my-selected-patients" element={renderWithAuthority(PlaceholderComponent, "marketer")} />
-            <Route path="/marketer/my-accepted-patients" element={renderWithAuthority(PlaceholderComponent, "marketer")} />
             <Route path="/error" element={<Error />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
