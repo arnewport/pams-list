@@ -3,12 +3,14 @@ package org.letpam.pamslist.data;
 import org.letpam.pamslist.data.mappers.AppUserMapper;
 import org.letpam.pamslist.models.AppUser;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 @Repository
@@ -20,6 +22,30 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
 
     public AppUserJdbcTemplateRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @Override
+    public AppUser findById(int id) {
+        final String sql = "SELECT id, email, first_name, last_name, organization_id, phone_number, fax_number, last_login, enabled " +
+                "FROM app_user WHERE id = ?";
+
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, appUserRowMapper());
+    }
+
+    private RowMapper<AppUser> appUserRowMapper() {
+        return (rs, rowNum) -> {
+            AppUser appUser = new AppUser();
+            appUser.setId(rs.getInt("id"));
+            appUser.setEmail(rs.getString("email"));
+            appUser.setFirstName(rs.getString("first_name"));
+            appUser.setLastName(rs.getString("last_name"));
+            appUser.setOrganizationId(rs.getInt("organization_id"));
+            appUser.setPhoneNumber(rs.getString("phone_number"));
+            appUser.setFaxNumber(Optional.ofNullable(rs.getString("fax_number")));
+            appUser.setLastLogin(rs.getTimestamp("last_login"));
+            appUser.setEnabled(rs.getBoolean("enabled"));
+            return appUser;
+        };
     }
 
     @Override

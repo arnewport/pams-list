@@ -30,6 +30,10 @@ public class AppUserService implements UserDetailsService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public AppUser findById(int id) {
+        return appUserRepository.findById(id);
+    }
+
     public AppUser findByEmail(String email) {
         logger.info("Finding user by email: " + email);
         AppUser user = appUserRepository.findByEmail(email);
