@@ -6,6 +6,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,6 +16,12 @@ public class MarketerInterestJdbcRepository implements MarketerInterestRepositor
 
     public MarketerInterestJdbcRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @Override
+    public List<MarketerInterest> findAllWithPatientId(int patientId) {
+        final String sql = "SELECT * FROM marketer_interest WHERE patient_id = ?";
+        return jdbcTemplate.query(sql, new MarketerInterestMapper(), patientId);
     }
 
     @Override

@@ -4,11 +4,16 @@ import org.letpam.pamslist.models.MarketerInterest;
 import org.letpam.pamslist.data.MarketerInterestRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class MarketerInterestService {
     private final MarketerInterestRepository repository;
+
+    public List<MarketerInterest> findAllWithPatientId(int patientId) {
+        return repository.findAllWithPatientId(patientId);
+    }
 
     public MarketerInterestService(MarketerInterestRepository repository) {
         this.repository = repository;

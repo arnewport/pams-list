@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -16,6 +17,15 @@ public class MarketerInterestController {
 
     public MarketerInterestController(MarketerInterestService service) {
         this.service = service;
+    }
+
+    @GetMapping("/patient/{patientId}/status")
+    public ResponseEntity<List<MarketerInterest>> findAllWithPatientId(@PathVariable int patientId) {
+        List<MarketerInterest> interests = service.findAllWithPatientId(patientId);
+        if (interests.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(interests, HttpStatus.OK);
     }
 
     @GetMapping("/check-interest")
