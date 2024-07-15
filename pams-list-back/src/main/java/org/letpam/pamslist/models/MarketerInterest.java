@@ -84,6 +84,10 @@ public class MarketerInterest {
         return status;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -95,10 +99,6 @@ public class MarketerInterest {
     @Override
     public int hashCode() {
         return Objects.hash(id, marketerId, patientId, dateInterested, dateAccepted, dateRejected, rejectionReason, status);
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 }
 
