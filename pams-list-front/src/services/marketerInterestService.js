@@ -46,45 +46,53 @@ export const createMarketerInterest = async (marketerInterest) => {
     }
   };
 
-  export const acceptMarketerInterest = async (marketerId, patientId) => {
-    try {
-      const response = await fetch(`${url}api/marketer-interest/${marketerId}/${patientId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: 'accepted', dateAccepted: new Date() }),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-  
-      return { status: response.status };
-    } catch (error) {
-      console.error('Error accepting marketer interest:', error);
-      throw error;
+export const acceptMarketerInterest = async (marketerId, patientId, marketerInterest) => {
+  try {
+    const response = await fetch(`${url}api/marketer-interest/${marketerId}/${patientId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...marketerInterest,
+        status: 'accepted',
+        dateAccepted: new Date(),
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
+
+    return { status: response.status };
+  } catch (error) {
+    console.error('Error accepting marketer interest:', error);
+    throw error;
+  }
+};
   
-  export const rejectMarketerInterest = async (marketerId, patientId) => {
-    try {
-      const response = await fetch(`${url}api/marketer-interest/${marketerId}/${patientId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: 'rejected', dateRejected: new Date() }),
-      });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-  
-      return { status: response.status };
-    } catch (error) {
-      console.error('Error rejecting marketer interest:', error);
-      throw error;
+export const rejectMarketerInterest = async (marketerId, patientId, marketerInterest) => {
+  try {
+    const response = await fetch(`${url}api/marketer-interest/${marketerId}/${patientId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...marketerInterest,
+        status: 'rejected',
+        dateRejected: new Date(),
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
+
+    return { status: response.status };
+  } catch (error) {
+    console.error('Error rejecting marketer interest:', error);
+    throw error;
+  }
+};
   

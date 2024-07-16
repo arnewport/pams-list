@@ -3,10 +3,15 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { archivePatient, updatePatient } from '../services/patientService';
 import { checkMarketerInterest, createMarketerInterest, acceptMarketerInterest, rejectMarketerInterest } from '../services/marketerInterestService';
 
+const url = process.env.REACT_APP_API_URL;
+
 const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRole, userId }) => {
   const [editablePatient, setEditablePatient] = useState({ ...patient });
   const [isEditing, setIsEditing] = useState(false);
   const [marketerInterest, setMarketerInterest] = useState(null);
+  const [marketerInterests, setMarketerInterests] = useState([]);
+  const [isAcceptedByAnother, setIsAcceptedByAnother] = useState(false);
+
 
   useEffect(() => {
       if (userRole === 'marketer') {
@@ -22,6 +27,35 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
           });
       }
   }, [userId, patient.id, userRole]);
+
+  useEffect(() => {
+    if (userRole === 'marketer' && marketerInterest) {
+      const fetchMarketerInterests = async () => {
+        try {
+          const response = await fetch(`${url}api/marketer-interest/patient/${patient.id}/status`);
+          if (response.ok) {
+            const data = await response.json();
+            setMarketerInterests(data);
+  
+            const acceptedInterest = data.find(interest => interest.status === 'accepted' && interest.marketerId !== userId);
+            if (acceptedInterest) {
+              setIsAcceptedByAnother(true);
+              alert("This patient was accepted by another user. You cannot accept the patient at this time. If the patient is placed, this patient will be removed from your list. If the placement does not occur, then you will be able to accept the patient again.");
+            } else if (data.some(interest => interest.status === 'accepted' && interest.marketerId === userId)) {
+              alert("You have accepted this patient. Let Pam will remove this patient from your list once their placement has been confirmed.");
+            }
+  
+          } else {
+            setMarketerInterests([]);
+          }
+        } catch (error) {
+          console.error('Error fetching marketer interests:', error);
+        }
+      };
+  
+      fetchMarketerInterests();
+    }
+  }, [userRole, marketerInterest, patient.id, userId]);
 
 
   const calculateLengthOfStay = (dateOfHospitalAdmission) => {
@@ -104,17 +138,17 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
 
   const handleAccept = async () => {
     try {
-      await acceptMarketerInterest(userId, patient.id);
+      await acceptMarketerInterest(userId, patient.id, marketerInterest);
       setMarketerInterest((prev) => ({ ...prev, status: 'accepted', dateAccepted: new Date() }));
     } catch (error) {
       console.error('Error accepting the patient:', error);
       alert('Failed to accept the patient. Please try again.');
     }
   };
-
+  
   const handleReject = async () => {
     try {
-      await rejectMarketerInterest(userId, patient.id);
+      await rejectMarketerInterest(userId, patient.id, marketerInterest);
       setMarketerInterest((prev) => ({ ...prev, status: 'rejected', dateRejected: new Date() }));
     } catch (error) {
       console.error('Error rejecting the patient:', error);
@@ -445,8 +479,8 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
           marketerInterest ? (
             marketerInterest.status === 'interested' ? (
               <>
-                <Button variant="success" onClick={handleAccept}>Accept Patient</Button>
-                <Button variant="danger" onClick={handleReject}>Reject Patient</Button>
+                <Button variant="success" onClick={handleAccept} disabled={isAcceptedByAnother}>Accept Patient</Button>
+                <Button variant="danger" onClick={handleReject} disabled={isAcceptedByAnother}>Reject Patient</Button>
               </>
             ) : null
           ) : (
