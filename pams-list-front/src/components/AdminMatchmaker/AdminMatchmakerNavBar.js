@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-const AdminMatchmakerNavBar = ({ onOpenAddModal }) => {
+const AdminMatchmakerNavBar = ({ onOpenAddModal, onOpenVerifyUsersModal }) => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
@@ -19,7 +19,7 @@ const AdminMatchmakerNavBar = ({ onOpenAddModal }) => {
             <NavLink className="nav-link" to="/admin/patient-archive">Patient Archive</NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link" to="/admin/verify-users">Verify Users</NavLink>
+            <NavLink className="nav-link" to="#" onClick={onOpenVerifyUsersModal}>Verify Users</NavLink>
           </li>
         </ul>
       </div>

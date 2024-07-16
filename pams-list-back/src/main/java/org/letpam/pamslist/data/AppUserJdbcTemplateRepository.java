@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -204,5 +205,22 @@ public class AppUserJdbcTemplateRepository implements AppUserRepository {
             logger.severe("Error getting authorities for user: " + e.getMessage());
             throw new RuntimeException("Database query error", e);
         }
+    }
+
+    public List<AppUser> findUnverifiedUsers() {
+        String sql = "SELECT * FROM app_user WHERE enabled = 0";
+        return jdbcTemplate.query(sql, new AppUserMapper(new ArrayList<>()));
+    }
+
+    @Override
+    public boolean verifyUser(int id) {
+        final String sql = "UPDATE app_user SET enabled = 1 WHERE id = ?";
+        return jdbcTemplate.update(sql, id) > 0;
+    }
+
+    @Override
+    public boolean deleteUser(int id) {
+        final String sql = "DELETE FROM app_user WHERE id = ?";
+        return jdbcTemplate.update(sql, id) > 0;
     }
 }

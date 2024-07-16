@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 @RestController
@@ -39,5 +40,31 @@ public class AppUserController {
         }
         logger.info("User found: " + appUser.getEmail());
         return ResponseEntity.ok(appUser);
+    }
+
+    @GetMapping("/unverified")
+    public ResponseEntity<List<AppUser>> getUnverifiedUsers() {
+        List<AppUser> unverifiedUsers = service.findUnverifiedUsers();
+        return new ResponseEntity<>(unverifiedUsers, HttpStatus.OK);
+    }
+
+    @PutMapping("/verify/{id}")
+    public ResponseEntity<Void> verifyUser(@PathVariable int id) {
+        boolean verified = service.verifyUser(id);
+        if (verified) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable int id) {
+        boolean deleted = service.deleteUser(id);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }

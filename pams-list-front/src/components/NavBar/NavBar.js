@@ -4,7 +4,7 @@ import AdminMatchmakerNavBar from '../AdminMatchmaker/AdminMatchmakerNavBar';
 import ManagerNavBar from '../Manager/ManagerNavBar';
 import MarketerNavBar from '../Marketer/MarketerNavBar';
 
-const NavBar = ({ onOpenAddModal }) => {
+const NavBar = ({ onOpenAddModal, onOpenVerifyUsersModal }) => {
   const { user } = useContext(AuthContext);
 
   if (!user) {
@@ -15,7 +15,7 @@ const NavBar = ({ onOpenAddModal }) => {
 
   return (
     <div>
-      {(role === 'admin' || role === 'admin') && <AdminMatchmakerNavBar onOpenAddModal={onOpenAddModal} />}
+      {(role === 'admin' || role === 'admin') && <AdminMatchmakerNavBar onOpenAddModal={onOpenAddModal} onOpenVerifyUsersModal={onOpenVerifyUsersModal} />}
       {role === 'manager' && <ManagerNavBar />}
       {role === 'marketer' && <MarketerNavBar />}
     </div>

@@ -15,6 +15,7 @@ const calculateLengthOfStay = (dateOfHospitalAdmission) => {
 // Lazy load the PatientModal component
 const PatientModal = lazy(() => import('./PatientModal'));
 const AddPatientModal = lazy(() => import('./AddPatientModal'));
+const VerifyUsersModal = lazy(() => import('./VerifyUsersModal'));
 
 const Patients = () => {
   const { patients, loading, error, setPatients } = usePatients();
@@ -28,6 +29,7 @@ const Patients = () => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showVerifyUsersModal, setShowVerifyUsersModal] = useState(false);
   const [filteredPatients, setFilteredPatients] = useState([]);
   const patientsPerPage = 20;
 
@@ -133,9 +135,13 @@ const Patients = () => {
     setShowAddModal(true);
   };
 
+  const onOpenVerifyUsersModal = () => {
+    setShowVerifyUsersModal(true);
+  };
+
   return (
     <>
-      <NavBar onOpenAddModal={onOpenAddModal} />
+      <NavBar onOpenAddModal={onOpenAddModal} onOpenVerifyUsersModal={onOpenVerifyUsersModal} />
       <div>
         <input type="text" value={searchTerm} onChange={handleSearchChange} placeholder="Search by name, manager, or organization" />
         <select value={sortField} onChange={handleSortFieldChange}>
@@ -256,6 +262,12 @@ const Patients = () => {
             show={showAddModal}
             handleClose={() => setShowAddModal(false)}
             onAdd={handleAddPatient}
+          />
+        </Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
+          <VerifyUsersModal
+            show={showVerifyUsersModal}
+            handleClose={() => setShowVerifyUsersModal(false)}
           />
         </Suspense>
       </div>

@@ -162,4 +162,16 @@ public class AppUserService implements UserDetailsService {
 
         return digits > 0 && letters > 0 && others > 0;
     }
+
+    public List<AppUser> findUnverifiedUsers() {
+        return appUserRepository.findUnverifiedUsers();
+    }
+
+    public boolean verifyUser(int id) {
+        return appUserRepository.verifyUser(id);
+    }
+
+    public boolean deleteUser(int id) {
+        return appUserRepository.deleteUser(id);
+    }
 }
