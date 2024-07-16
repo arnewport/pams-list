@@ -112,6 +112,30 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
     }));
   };
 
+  // const handleInterested = async () => {
+  //   const marketerInterest = {
+  //     marketerId: userId, 
+  //     patientId: patient.id,
+  //     dateInterested: new Date(),
+  //     dateAccepted: null,
+  //     dateRejected: null,
+  //     rejectionReason: '',
+  //     status: 'interested'
+  //   };
+
+  //   try {
+  //     const response = await createMarketerInterest(marketerInterest);
+  //     if (response.status === 201) {
+  //       alert('Interest registered successfully');
+  //     } else {
+  //       alert('Failed to register interest');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error registering interest:', error);
+  //     alert('Error registering interest: ' + error);
+  //   }
+  // };
+
   const handleInterested = async () => {
     const marketerInterest = {
       marketerId: userId, 
@@ -122,10 +146,11 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
       rejectionReason: '',
       status: 'interested'
     };
-
+  
     try {
       const response = await createMarketerInterest(marketerInterest);
       if (response.status === 201) {
+        setMarketerInterest({ ...marketerInterest, status: 'interested' }); // Update state immediately
         alert('Interest registered successfully');
       } else {
         alert('Failed to register interest');
