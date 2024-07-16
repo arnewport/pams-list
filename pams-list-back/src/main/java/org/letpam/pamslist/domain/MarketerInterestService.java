@@ -23,6 +23,10 @@ public class MarketerInterestService {
         return repository.findByMarketerIdAndPatientId(marketerId, patientId);
     }
 
+    public List<MarketerInterest> findByMarketerId(int marketerId) {
+        return repository.findByMarketerId(marketerId);
+    }
+
     public MarketerInterest create(MarketerInterest marketerInterest) {
         return repository.create(marketerInterest);
     }

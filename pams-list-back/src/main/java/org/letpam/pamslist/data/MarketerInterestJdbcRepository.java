@@ -25,6 +25,12 @@ public class MarketerInterestJdbcRepository implements MarketerInterestRepositor
     }
 
     @Override
+    public List<MarketerInterest> findByMarketerId(int marketerId) {
+        final String sql = "SELECT * FROM marketer_interest WHERE marketer_id = ?";
+        return jdbcTemplate.query(sql, new MarketerInterestMapper(), marketerId);
+    }
+
+    @Override
     public Optional<MarketerInterest> findByMarketerIdAndPatientId(int marketerId, int patientId) {
         try {
             String sql = "SELECT * FROM marketer_interest WHERE marketer_id = ? AND patient_id = ?";

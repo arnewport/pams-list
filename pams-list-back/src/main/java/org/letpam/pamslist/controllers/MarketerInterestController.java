@@ -28,6 +28,12 @@ public class MarketerInterestController {
         return new ResponseEntity<>(interests, HttpStatus.OK);
     }
 
+    @GetMapping("/marketer/{marketerId}")
+    public ResponseEntity<List<MarketerInterest>> findByMarketerId(@PathVariable int marketerId) {
+        List<MarketerInterest> marketerInterests = service.findByMarketerId(marketerId);
+        return ResponseEntity.ok(marketerInterests);
+    }
+
     @GetMapping("/check-interest")
     public ResponseEntity<MarketerInterest> checkMarketerInterest(@RequestParam int marketerId, @RequestParam int patientId) {
         Optional<MarketerInterest> marketerInterest = service.findByMarketerIdAndPatientId(marketerId, patientId);

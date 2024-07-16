@@ -95,4 +95,25 @@ export const rejectMarketerInterest = async (marketerId, patientId, marketerInte
     throw error;
   }
 };
+
+export const getMarketerInterestsByMarketerId = async (marketerId) => {
+  try {
+      const response = await fetch(`${url}api/marketer-interest/marketer/${marketerId}`, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+      });
+
+      if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+  } catch (error) {
+      console.error('Error fetching marketer interests:', error);
+      throw error;
+  }
+};
   

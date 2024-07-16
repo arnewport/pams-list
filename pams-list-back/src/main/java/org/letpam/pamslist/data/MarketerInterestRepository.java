@@ -8,6 +8,7 @@ import java.util.Optional;
 public interface MarketerInterestRepository {
     List<MarketerInterest> findAllWithPatientId(int patientId);
     Optional<MarketerInterest> findByMarketerIdAndPatientId(int marketerId, int patientId);
+    List<MarketerInterest> findByMarketerId(int marketerId);
     MarketerInterest create(MarketerInterest marketerInterest);
     boolean update(MarketerInterest marketerInterest);
     boolean delete(int marketerId, int patientId);
