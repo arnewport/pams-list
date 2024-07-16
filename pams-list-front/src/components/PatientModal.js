@@ -112,30 +112,6 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
     }));
   };
 
-  // const handleInterested = async () => {
-  //   const marketerInterest = {
-  //     marketerId: userId, 
-  //     patientId: patient.id,
-  //     dateInterested: new Date(),
-  //     dateAccepted: null,
-  //     dateRejected: null,
-  //     rejectionReason: '',
-  //     status: 'interested'
-  //   };
-
-  //   try {
-  //     const response = await createMarketerInterest(marketerInterest);
-  //     if (response.status === 201) {
-  //       alert('Interest registered successfully');
-  //     } else {
-  //       alert('Failed to register interest');
-  //     }
-  //   } catch (error) {
-  //     console.error('Error registering interest:', error);
-  //     alert('Error registering interest: ' + error);
-  //   }
-  // };
-
   const handleInterested = async () => {
     const marketerInterest = {
       marketerId: userId, 
@@ -163,10 +139,16 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
 
   const handleAccept = async () => {
     try {
+      // Update the MarketerInterest status to 'accepted'
       await acceptMarketerInterest(userId, patient.id, marketerInterest);
+  
+      // Update the Patient status to 'accepted'
+      const updatedPatient = { ...patient, patientStatus: 'accepted' };
+      await updatePatient(patient.id, updatedPatient);
+  
+      // Update the local state for the modal
       setMarketerInterest((prev) => ({ ...prev, status: 'accepted', dateAccepted: new Date() }));
-      // Update the patient status locally
-      onUpdate({ ...patient, patientStatus: 'accepted' });
+      onUpdate(updatedPatient); // This updates the patient in the list
     } catch (error) {
       console.error('Error accepting the patient:', error);
       alert('Failed to accept the patient. Please try again.');
@@ -175,10 +157,11 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
 
   const handleReject = async () => {
     try {
+      // Update the MarketerInterest status to 'rejected'
       await rejectMarketerInterest(userId, patient.id, marketerInterest);
+  
+      // Update the local state for the modal
       setMarketerInterest((prev) => ({ ...prev, status: 'rejected', dateRejected: new Date() }));
-      // Update the patient status locally
-      onUpdate({ ...patient, patientStatus: 'rejected' });
     } catch (error) {
       console.error('Error rejecting the patient:', error);
       alert('Failed to reject the patient. Please try again.');
