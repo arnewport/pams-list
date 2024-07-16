@@ -140,16 +140,20 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
     try {
       await acceptMarketerInterest(userId, patient.id, marketerInterest);
       setMarketerInterest((prev) => ({ ...prev, status: 'accepted', dateAccepted: new Date() }));
+      // Update the patient status locally
+      onUpdate({ ...patient, patientStatus: 'accepted' });
     } catch (error) {
       console.error('Error accepting the patient:', error);
       alert('Failed to accept the patient. Please try again.');
     }
   };
-  
+
   const handleReject = async () => {
     try {
       await rejectMarketerInterest(userId, patient.id, marketerInterest);
       setMarketerInterest((prev) => ({ ...prev, status: 'rejected', dateRejected: new Date() }));
+      // Update the patient status locally
+      onUpdate({ ...patient, patientStatus: 'rejected' });
     } catch (error) {
       console.error('Error rejecting the patient:', error);
       alert('Failed to reject the patient. Please try again.');
