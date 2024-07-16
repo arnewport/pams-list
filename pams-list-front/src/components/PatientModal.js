@@ -173,6 +173,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
       const updatedPatient = await updatePatient(patient.id, { ...patient, patientStatus: 'placed' });
       // Update the patient status locally
       onUpdate({ ...patient, patientStatus: 'placed' });
+      handleArchive();
       alert('The placement has been confirmed.');
     } catch (error) {
       console.error('Error confirming patient placement:', error);
