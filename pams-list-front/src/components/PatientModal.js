@@ -168,6 +168,18 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
     }
   };
 
+  const handleConfirmPlacement = async () => {
+    try {
+      const updatedPatient = await updatePatient(patient.id, { ...patient, patientStatus: 'placed' });
+      // Update the patient status locally
+      onUpdate({ ...patient, patientStatus: 'placed' });
+      alert('The placement has been confirmed.');
+    } catch (error) {
+      console.error('Error confirming patient placement:', error);
+      alert('Failed to confirm patient placement. Please try again.');
+    }
+  };
+
   return (
     <Modal show={show} onHide={handleClose} size="xl" fullscreen>
       <Modal.Header closeButton>
@@ -498,6 +510,9 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
           ) : (
             <Button variant="info" onClick={handleInterested}>I'm Interested</Button>
           )
+        )}
+        {(userRole === 'admin' || userRole === 'matchmaker') && patient.patientStatus === 'accepted' && (
+          <Button variant="primary" onClick={handleConfirmPlacement}>Confirm Placement</Button>
         )}
       </Modal.Footer>
     </Modal>
