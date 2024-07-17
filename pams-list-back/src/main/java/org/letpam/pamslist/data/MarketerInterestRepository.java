@@ -12,5 +12,7 @@ public interface MarketerInterestRepository {
     MarketerInterest create(MarketerInterest marketerInterest);
     boolean update(MarketerInterest marketerInterest);
     boolean delete(int marketerId, int patientId);
+    List<MarketerInterest> findInterestedByMarketerId(int marketerId);
+    List<MarketerInterest> findAcceptedByMarketerId(int marketerId);
 }
 

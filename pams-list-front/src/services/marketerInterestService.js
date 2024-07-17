@@ -116,4 +116,32 @@ export const getMarketerInterestsByMarketerId = async (marketerId) => {
       throw error;
   }
 };
+
+export const fetchInterestedPatients = async (marketerId) => {
+  try {
+    const response = await fetch(`${url}api/marketer-interest/interested/${marketerId}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching interested patients:', error);
+    throw error;
+  }
+};
+
+export const fetchAcceptedPatients = async (marketerId) => {
+  try {
+    const response = await fetch(`${url}api/marketer-interest/accepted/${marketerId}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching accepted patients:', error);
+    throw error;
+  }
+};
   

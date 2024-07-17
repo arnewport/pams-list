@@ -3,6 +3,7 @@ import usePatients from '../hooks/usePatients';
 import useUserData from '../hooks/useUserData';
 import NavBar from "./NavBar/NavBar";
 import AuthContext from "../contexts/AuthContext";
+import { fetchInterestedPatients, fetchAcceptedPatients } from '../services/marketerInterestService'; // Assuming this service exists
 
 const calculateLengthOfStay = (dateOfHospitalAdmission) => {
   const today = new Date();
@@ -26,11 +27,14 @@ const Patients = () => {
   const [sortField, setSortField] = useState('id');
   const [sortOrder, setSortOrder] = useState('asc');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [viewMode, setViewMode] = useState('all'); // New state for view mode
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showVerifyUsersModal, setShowVerifyUsersModal] = useState(false);
   const [filteredPatients, setFilteredPatients] = useState([]);
+  const [interestedPatients, setInterestedPatients] = useState([]);
+  const [acceptedPatients, setAcceptedPatients] = useState([]);
   const patientsPerPage = 20;
 
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
@@ -42,7 +46,21 @@ const Patients = () => {
   const currentUserId = user?.userId;
 
   useEffect(() => {
+    if (currentUserRole === 'marketer' && currentUserId) {
+      fetchInterestedPatients(currentUserId)
+        .then(data => setInterestedPatients(data))
+        .catch(error => console.error('Error fetching interested patients:', error));
+      fetchAcceptedPatients(currentUserId)
+        .then(data => setAcceptedPatients(data))
+        .catch(error => console.error('Error fetching accepted patients:', error));
+    }
+  }, [currentUserRole, currentUserId]);
+
+  useEffect(() => {
     if (!loading && patients.length > 0 && users.length > 0 && organizations.length > 0) {
+      const interestedPatientIds = new Set(interestedPatients.map(interest => interest.patientId));
+      const acceptedPatientIds = new Set(acceptedPatients.map(accept => accept.patientId));
+
       const newFilteredPatients = patients.filter(patient => {
         const manager = users.find(user => user.id === patient.managerId);
         const organization = organizations.find(org => org.id === patient.managerOrganizationId);
@@ -59,7 +77,13 @@ const Patients = () => {
           (filterStatus === 'available' && patient.patientStatus === 'available') ||
           (filterStatus === 'accepted' && patient.patientStatus === 'accepted');
 
-        return searchFilter && statusFilter;
+        const viewModeFilter =
+          viewMode === 'all' ||
+          (viewMode === 'interested' && interestedPatientIds.has(patient.id)) ||
+          (viewMode === 'accepted' && acceptedPatientIds.has(patient.id)) ||
+          (viewMode === 'added' && patient.managerId === currentUserId);
+
+        return searchFilter && statusFilter && viewModeFilter;
       });
 
       const newSortedPatients = newFilteredPatients.sort((a, b) => {
@@ -86,7 +110,7 @@ const Patients = () => {
 
       setFilteredPatients(newSortedPatients);
     }
-  }, [patients, users, organizations, searchTerm, sortField, sortOrder, filterStatus, loading]);
+  }, [patients, users, organizations, searchTerm, sortField, sortOrder, filterStatus, loading, interestedPatients, acceptedPatients, viewMode]);
 
   // Calculate the current patients to display
   const indexOfLastPatient = currentPage * patientsPerPage;
@@ -141,7 +165,7 @@ const Patients = () => {
 
   return (
     <>
-      <NavBar onOpenAddModal={onOpenAddModal} onOpenVerifyUsersModal={onOpenVerifyUsersModal} />
+      <NavBar onOpenAddModal={onOpenAddModal} onOpenVerifyUsersModal={onOpenVerifyUsersModal} setViewMode={setViewMode} currentUserRole={currentUserRole} />
       <div>
         <input type="text" value={searchTerm} onChange={handleSearchChange} placeholder="Search by name, manager, or organization" />
         <select value={sortField} onChange={handleSortFieldChange}>

@@ -77,4 +77,14 @@ public class MarketerInterestJdbcRepository implements MarketerInterestRepositor
         final String sql = "DELETE FROM marketer_interest WHERE marketer_id = ? AND patient_id = ?";
         return jdbcTemplate.update(sql, marketerId, patientId) > 0;
     }
+
+    public List<MarketerInterest> findInterestedByMarketerId(int marketerId) {
+        final String sql = "SELECT * FROM marketer_interest WHERE marketer_id = ? AND status = 'interested'";
+        return jdbcTemplate.query(sql, new MarketerInterestMapper(), marketerId);
+    }
+
+    public List<MarketerInterest> findAcceptedByMarketerId(int marketerId) {
+        final String sql = "SELECT * FROM marketer_interest WHERE marketer_id = ? AND status = 'accepted'";
+        return jdbcTemplate.query(sql, new MarketerInterestMapper(), marketerId);
+    }
 }

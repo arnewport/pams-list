@@ -72,4 +72,22 @@ public class MarketerInterestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
         }
     }
+
+    @GetMapping("/interested/{marketerId}")
+    public ResponseEntity<List<MarketerInterest>> getInterestedPatients(@PathVariable int marketerId) {
+        List<MarketerInterest> interests = service.getInterestedPatients(marketerId);
+        if (interests.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(interests, HttpStatus.OK);
+    }
+
+    @GetMapping("/accepted/{marketerId}")
+    public ResponseEntity<List<MarketerInterest>> getAcceptedPatients(@PathVariable int marketerId) {
+        List<MarketerInterest> interests = service.getAcceptedPatients(marketerId);
+        if (interests.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(interests, HttpStatus.OK);
+    }
 }

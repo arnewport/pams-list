@@ -38,5 +38,13 @@ public class MarketerInterestService {
     public boolean delete(int marketerId, int patientId) {
         return repository.delete(marketerId, patientId);
     }
+
+    public List<MarketerInterest> getInterestedPatients(int marketerId) {
+        return repository.findInterestedByMarketerId(marketerId);
+    }
+
+    public List<MarketerInterest> getAcceptedPatients(int marketerId) {
+        return repository.findAcceptedByMarketerId(marketerId);
+    }
 }
 
