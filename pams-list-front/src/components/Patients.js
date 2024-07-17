@@ -3,6 +3,7 @@ import usePatients from '../hooks/usePatients';
 import useUserData from '../hooks/useUserData';
 import NavBar from "./NavBar/NavBar";
 import AuthContext from "../contexts/AuthContext";
+import { fetchPatients } from '../services/patientService';
 
 const calculateLengthOfStay = (dateOfHospitalAdmission) => {
   const today = new Date();
@@ -139,6 +140,16 @@ const Patients = () => {
     setShowVerifyUsersModal(true);
   };
 
+  // Function to fetch and update patients
+  const handleRefresh = async () => {
+    try {
+      const updatedPatients = await fetchPatients(); // Fetch the updated patients
+      setPatients(updatedPatients); // Update the local state with the new data
+    } catch (error) {
+      console.error('Error refreshing patients:', error);
+    }
+  };
+
   const [viewMode, setViewMode] = useState('all'); // 'all', 'interested', 'accepted', 'added'
 
   useEffect(() => {
@@ -269,6 +280,9 @@ const Patients = () => {
             <div className="d-flex justify-content-end mb-3">
               <button className="btn btn-info btn-lg" onClick={handleLogout}>
                 Log Out
+              </button>
+              <button className="btn btn-secondary btn-lg" onClick={handleRefresh}>
+                Refresh
               </button>
             </div>
           </div>

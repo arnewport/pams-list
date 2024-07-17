@@ -1,27 +1,29 @@
 import { useState, useEffect } from 'react';
-import { fetchPatients } from '../services/patientService';
+import { fetchPatients as fetchPatientsData } from '../services/patientService';
 
 const usePatients = () => {
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const getPatients = async () => {
-      try {
-        const data = await fetchPatients();
-        setPatients(data);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchPatients = async () => {
+    setLoading(true);
+    try {
+      const data = await fetchPatientsData();
+      setPatients(data);
+      setError(null);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    getPatients();
+  useEffect(() => {
+    fetchPatients();
   }, []);
 
-  return { patients, loading, error, setPatients };
+  return { patients, loading, error, setPatients, fetchPatients };
 };
 
 export default usePatients;
