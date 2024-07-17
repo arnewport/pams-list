@@ -3,7 +3,6 @@ import usePatients from '../hooks/usePatients';
 import useUserData from '../hooks/useUserData';
 import NavBar from "./NavBar/NavBar";
 import AuthContext from "../contexts/AuthContext";
-import { fetchInterestedPatients, fetchAcceptedPatients } from '../services/marketerInterestService'; // Assuming this service exists
 
 const calculateLengthOfStay = (dateOfHospitalAdmission) => {
   const today = new Date();
@@ -27,14 +26,11 @@ const Patients = () => {
   const [sortField, setSortField] = useState('id');
   const [sortOrder, setSortOrder] = useState('asc');
   const [filterStatus, setFilterStatus] = useState('all');
-  const [viewMode, setViewMode] = useState('all'); // New state for view mode
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showVerifyUsersModal, setShowVerifyUsersModal] = useState(false);
   const [filteredPatients, setFilteredPatients] = useState([]);
-  const [interestedPatients, setInterestedPatients] = useState([]);
-  const [acceptedPatients, setAcceptedPatients] = useState([]);
   const patientsPerPage = 20;
 
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
@@ -46,21 +42,7 @@ const Patients = () => {
   const currentUserId = user?.userId;
 
   useEffect(() => {
-    if (currentUserRole === 'marketer' && currentUserId) {
-      fetchInterestedPatients(currentUserId)
-        .then(data => setInterestedPatients(data))
-        .catch(error => console.error('Error fetching interested patients:', error));
-      fetchAcceptedPatients(currentUserId)
-        .then(data => setAcceptedPatients(data))
-        .catch(error => console.error('Error fetching accepted patients:', error));
-    }
-  }, [currentUserRole, currentUserId]);
-
-  useEffect(() => {
     if (!loading && patients.length > 0 && users.length > 0 && organizations.length > 0) {
-      const interestedPatientIds = new Set(interestedPatients.map(interest => interest.patientId));
-      const acceptedPatientIds = new Set(acceptedPatients.map(accept => accept.patientId));
-
       const newFilteredPatients = patients.filter(patient => {
         const manager = users.find(user => user.id === patient.managerId);
         const organization = organizations.find(org => org.id === patient.managerOrganizationId);
@@ -77,13 +59,7 @@ const Patients = () => {
           (filterStatus === 'available' && patient.patientStatus === 'available') ||
           (filterStatus === 'accepted' && patient.patientStatus === 'accepted');
 
-        const viewModeFilter =
-          viewMode === 'all' ||
-          (viewMode === 'interested' && interestedPatientIds.has(patient.id)) ||
-          (viewMode === 'accepted' && acceptedPatientIds.has(patient.id)) ||
-          (viewMode === 'added' && patient.managerId === currentUserId);
-
-        return searchFilter && statusFilter && viewModeFilter;
+        return searchFilter && statusFilter;
       });
 
       const newSortedPatients = newFilteredPatients.sort((a, b) => {
@@ -110,7 +86,7 @@ const Patients = () => {
 
       setFilteredPatients(newSortedPatients);
     }
-  }, [patients, users, organizations, searchTerm, sortField, sortOrder, filterStatus, loading, interestedPatients, acceptedPatients, viewMode]);
+  }, [patients, users, organizations, searchTerm, sortField, sortOrder, filterStatus, loading]);
 
   // Calculate the current patients to display
   const indexOfLastPatient = currentPage * patientsPerPage;
@@ -163,9 +139,38 @@ const Patients = () => {
     setShowVerifyUsersModal(true);
   };
 
+  const [viewMode, setViewMode] = useState('all'); // 'all', 'interested', 'accepted', 'added'
+
+  useEffect(() => {
+    if (currentUserRole === 'marketer' && viewMode !== 'all') {
+      const fetchMarketerInterest = async () => {
+        try {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/marketer-interest/marketer/${currentUserId}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (viewMode === 'interested') {
+              const interestedPatientIds = data.filter(mi => mi.status === 'interested').map(mi => mi.patientId);
+              setFilteredPatients(patients.filter(patient => interestedPatientIds.includes(patient.id)));
+            } else if (viewMode === 'accepted') {
+              const acceptedPatientIds = data.filter(mi => mi.status === 'accepted').map(mi => mi.patientId);
+              setFilteredPatients(patients.filter(patient => acceptedPatientIds.includes(patient.id)));
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching marketer interests:', error);
+        }
+      };
+      fetchMarketerInterest();
+    } else if (currentUserRole === 'manager' && viewMode === 'added') {
+      setFilteredPatients(patients.filter(patient => patient.managerId === currentUserId));
+    } else {
+      setFilteredPatients(patients);
+    }
+  }, [viewMode, currentUserRole, currentUserId, patients]);
+
   return (
     <>
-      <NavBar onOpenAddModal={onOpenAddModal} onOpenVerifyUsersModal={onOpenVerifyUsersModal} setViewMode={setViewMode} currentUserRole={currentUserRole} />
+      <NavBar onOpenAddModal={onOpenAddModal} onOpenVerifyUsersModal={onOpenVerifyUsersModal} setViewMode={setViewMode} />
       <div>
         <input type="text" value={searchTerm} onChange={handleSearchChange} placeholder="Search by name, manager, or organization" />
         <select value={sortField} onChange={handleSortFieldChange}>

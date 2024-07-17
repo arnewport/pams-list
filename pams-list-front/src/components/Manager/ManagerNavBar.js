@@ -9,11 +9,11 @@ const ManagerNavBar = ({ onOpenAddModal, setViewMode }) => {
             <button className="nav-link btn" onClick={() => setViewMode('all')}>View Patients</button>
           </li>
           <li className="nav-item">
-            <button className="nav-link btn" onClick={() => setViewMode('added')}>My Added Patients</button>
-          </li>
-          <li className="nav-item">
             <button className="nav-link btn" onClick={onOpenAddModal}>Add Patients</button>
           </li>
+          <li className="nav-item">
+            <button className="nav-link btn" onClick={() => setViewMode('added')}>My Added Patients</button>
+          </li>    
         </ul>
       </div>
     </nav>
