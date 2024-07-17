@@ -126,7 +126,8 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
     try {
       const response = await createMarketerInterest(marketerInterest);
       if (response.status === 201) {
-        setMarketerInterest({ ...marketerInterest, status: 'interested' }); // Update state immediately
+        setMarketerInterest((prev) => ({ ...prev, status: 'interested', dateInterested: new Date() })); // Update state immediately
+        onUpdate({ ...patient, patientStatus: 'interested' });
         alert('Interest registered successfully');
       } else {
         alert('Failed to register interest');

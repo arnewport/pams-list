@@ -145,7 +145,7 @@ const Patients = () => {
     if (currentUserRole === 'marketer' && viewMode !== 'all') {
       const fetchMarketerInterest = async () => {
         try {
-          const response = await fetch(`${process.env.REACT_APP_API_URL}/api/marketer-interest/marketer/${currentUserId}`);
+          const response = await fetch(`${process.env.REACT_APP_API_URL}api/marketer-interest/marketer/${currentUserId}`);
           if (response.ok) {
             const data = await response.json();
             if (viewMode === 'interested') {
