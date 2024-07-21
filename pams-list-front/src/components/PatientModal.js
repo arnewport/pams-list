@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { archivePatient, updatePatient } from '../services/patientService';
 import { checkMarketerInterest, createMarketerInterest, acceptMarketerInterest, rejectMarketerInterest } from '../services/marketerInterestService';
+import { fetchUserById } from '../services/dataService';
+import { composeAndSendInterestEmail, composeAndSendAcceptEmail } from '../services/emailService';
 
 const url = process.env.REACT_APP_API_URL;
 
@@ -126,6 +128,11 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
     try {
       const response = await createMarketerInterest(marketerInterest);
       if (response.status === 201) {
+        const marketerInfo = await fetchUserById(userId);
+
+        // Compose and send the email
+        await composeAndSendInterestEmail(marketerInfo, patient)
+
         setMarketerInterest((prev) => ({ ...prev, status: 'interested', dateInterested: new Date() })); // Update state immediately
         onUpdate({ ...patient, patientStatus: 'interested' });
         alert('Interest registered successfully');
@@ -140,12 +147,18 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
 
   const handleAccept = async () => {
     try {
+      const marketerInfo = await fetchUserById(userId);
+      const managerInfo = await fetchUserById(patient.managerId);
+
       // Update the MarketerInterest status to 'accepted'
       await acceptMarketerInterest(userId, patient.id, marketerInterest);
   
       // Update the Patient status to 'accepted'
       const updatedPatient = { ...patient, patientStatus: 'accepted' };
       await updatePatient(patient.id, updatedPatient);
+
+      // Compose and send the email
+      await composeAndSendAcceptEmail(managerInfo, marketerInfo, updatedPatient)
   
       // Update the local state for the modal
       setMarketerInterest((prev) => ({ ...prev, status: 'accepted', dateAccepted: new Date() }));
@@ -160,7 +173,7 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
     try {
       // Update the MarketerInterest status to 'rejected'
       await rejectMarketerInterest(userId, patient.id, marketerInterest);
-  
+
       // Update the local state for the modal
       setMarketerInterest((prev) => ({ ...prev, status: 'rejected', dateRejected: new Date() }));
     } catch (error) {
