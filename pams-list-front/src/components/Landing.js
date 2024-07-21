@@ -5,10 +5,10 @@ function Landing() {
     <div className="container-fluid">
       <h1 className="display-3 mt-3">Pam's List</h1>
       <div className="d-flex flex-grow-1 justify-content-end">
-        <Link to="/login" className="btn btn-info btn-lg">
+        <Link to="/login" className="btn btn-primary btn-lg  custom-link">
           Login
         </Link>
-        <Link to="/signup" className="btn btn-info btn-lg">
+        <Link to="/signup" className="btn btn-secondary btn-lg custom-link">
           Sign Up
         </Link>
       </div>

@@ -6,12 +6,10 @@ import { refreshToken, logout } from "./services/AuthAPI";
 import Landing from "./components/Landing";
 import Login from "./components/Login";
 import SignUp from "./components/SignUp";
-import Home from "./components/Home";
 import Error from "./components/Error";
 import NotFound from "./components/NotFound";
 import Patients from "./components/Patients";
-import NavBar from "./components/NavBar/NavBar";
-import PlaceholderComponent from "./components/PlaceholderComponent";
+
 
 const TIMEOUT_MILLISECONDS = 14 * 60 * 1000;
 
@@ -91,7 +89,6 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/patients" element={<Patients />} />
-            <Route path="/home" element={renderWithAuthority(Home, "admin", "matchmaker", "manager", "marketer")} />
             <Route path="/error" element={<Error />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

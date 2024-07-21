@@ -68,7 +68,7 @@ function Login() {
             <button type="submit" className="btn btn-primary btn-lg">
               Log in
             </button>
-            <Link to="/" className="btn btn-warning btn-lg">
+            <Link to="/" className="btn btn-warning btn-lg custom-link">
               Cancel
             </Link>
           </div>
