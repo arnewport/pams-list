@@ -271,8 +271,8 @@ const AddPatientModal = ({ show, handleClose, onAdd }) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>Close</Button>
-        <Button variant="success" onClick={handleSave}>Add Patient</Button>
+        <Button className="me-2" variant="secondary" onClick={handleClose}>Close</Button>
+        <Button className="me-2" variant="success" onClick={handleSave}>Add Patient</Button>
       </Modal.Footer>
     </Modal>
   );

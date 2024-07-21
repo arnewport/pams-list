@@ -275,4 +275,3 @@ a:hover, a:focus {
   .custom-link:active {
     color: #ffffff !important; /* Ensure text color remains white on hover, focus, and active states */
   }
-  

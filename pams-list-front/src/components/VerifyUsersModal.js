@@ -54,7 +54,7 @@ const VerifyUsersModal = ({ show, handleClose }) => {
                 <td>{user.lastName}</td>
                 <td>
                   <Button variant="success" className="me-2" onClick={() => handleVerifyUser(user.id)}>Verify</Button>
-                  <Button variant="danger" onClick={() => handleRemoveUser(user.id)}>Remove</Button>
+                  <Button variant="danger" className="me-2" onClick={() => handleRemoveUser(user.id)}>Remove</Button>
                 </td>
               </tr>
             ))}
@@ -62,7 +62,7 @@ const VerifyUsersModal = ({ show, handleClose }) => {
         </Table>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>Close</Button>
+        <Button variant="secondary" className="me-2" onClick={handleClose}>Close</Button>
       </Modal.Footer>
     </Modal>
   );

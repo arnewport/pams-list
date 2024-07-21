@@ -507,27 +507,27 @@ const PatientModal = ({ show, handleClose, patient, onArchive, onUpdate, userRol
         {userRole === 'admin' || userRole === 'matchmaker' || (userRole === 'manager' && userId === patient.managerId) ? (
           <>
             {isEditing ? (
-              <Button variant="success" onClick={handleSave}>Save</Button>
+              <Button className="me-2" variant="success" onClick={handleSave}>Save</Button>
             ) : (
-              <Button variant="warning" onClick={handleEdit}>Edit Patient</Button>
+              <Button className="me-2" variant="warning" onClick={handleEdit}>Edit Patient</Button>
             )}
-            <Button variant="danger" onClick={handleArchive}>Remove Patient</Button>
+            <Button className="me-2" variant="danger" onClick={handleArchive}>Remove Patient</Button>
           </>
         ) : null}
         {userRole === 'marketer' && (
           marketerInterest ? (
             marketerInterest.status === 'interested' ? (
               <>
-                <Button variant="success" onClick={handleAccept} disabled={isAcceptedByAnother}>Accept Patient</Button>
-                <Button variant="danger" onClick={handleReject} disabled={isAcceptedByAnother}>Reject Patient</Button>
+                <Button className="me-2" variant="success" onClick={handleAccept} disabled={isAcceptedByAnother}>Accept Patient</Button>
+                <Button className="me-2" variant="danger" onClick={handleReject} disabled={isAcceptedByAnother}>Reject Patient</Button>
               </>
             ) : null
           ) : (
-            <Button variant="info" onClick={handleInterested}>I'm Interested</Button>
+            <Button className="me-2" variant="info" onClick={handleInterested}>I'm Interested</Button>
           )
         )}
         {(userRole === 'admin' || userRole === 'matchmaker') && patient.patientStatus === 'accepted' && (
-          <Button variant="primary" onClick={handleConfirmPlacement}>Confirm Placement</Button>
+          <Button className="me-2" variant="primary" onClick={handleConfirmPlacement}>Confirm Placement</Button>
         )}
       </Modal.Footer>
     </Modal>
