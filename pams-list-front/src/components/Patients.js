@@ -182,23 +182,51 @@ const Patients = () => {
   return (
     <>
       <NavBar onOpenAddModal={onOpenAddModal} onOpenVerifyUsersModal={onOpenVerifyUsersModal} setViewMode={setViewMode} />
-      <div>
-        <input type="text" value={searchTerm} onChange={handleSearchChange} placeholder="Search by name, manager, or organization" />
-        <select value={sortField} onChange={handleSortFieldChange}>
-          <option value="id">Sort by ID</option>
-          <option value="name">Sort by Name</option>
-          <option value="dateOfAdmission">Sort by Date of Admission</option>
-          <option value="dateAdded">Sort by Date Added to Pam's List</option>
-        </select>
-        <select value={sortOrder} onChange={handleSortOrderChange}>
-          <option value="asc">Ascending</option>
-          <option value="desc">Descending</option>
-        </select>
-        <select value={filterStatus} onChange={handleFilterStatusChange}>
-          <option value="all">All</option>
-          <option value="available">Available</option>
-          <option value="accepted">Accepted</option>
-        </select>
+      <div className="container mt-3">
+        <div className="row mb-2">
+          <div className="col-md-4">
+            <input 
+              type="text" 
+              className="form-control" 
+              value={searchTerm} 
+              onChange={handleSearchChange} 
+              placeholder="Search by name, manager, or organization" 
+            />
+          </div>
+          <div className="col-md-2">
+            <select 
+              className="form-select" 
+              value={sortField} 
+              onChange={handleSortFieldChange}
+            >
+              <option value="id">Sort by ID</option>
+              <option value="name">Sort by Name</option>
+              <option value="dateOfAdmission">Sort by Date of Admission</option>
+              <option value="dateAdded">Sort by Date Added to Pam's List</option>
+            </select>
+          </div>
+          <div className="col-md-2">
+            <select 
+              className="form-select" 
+              value={sortOrder} 
+              onChange={handleSortOrderChange}
+            >
+              <option value="asc">Ascending</option>
+              <option value="desc">Descending</option>
+            </select>
+          </div>
+          <div className="col-md-2">
+            <select 
+              className="form-select" 
+              value={filterStatus} 
+              onChange={handleFilterStatusChange}
+            >
+              <option value="all">All</option>
+              <option value="available">Available</option>
+              <option value="accepted">Accepted</option>
+            </select>
+          </div>
+        </div>
       </div>
       <div className="container">
         <div className="row justify-content-center">

@@ -10,7 +10,6 @@ import Error from "./components/Error";
 import NotFound from "./components/NotFound";
 import Patients from "./components/Patients";
 
-
 const TIMEOUT_MILLISECONDS = 14 * 60 * 1000;
 
 const App = () => {
